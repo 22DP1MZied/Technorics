@@ -82,3 +82,21 @@ Route::middleware(['auth'])->prefix('profile')->group(function () {
 
 // Additional wishlist route for AJAX removal
 Route::middleware(['auth'])->delete('/wishlist/remove-by-product/{product}', [\App\Http\Controllers\WishlistController::class, 'removeByProduct'])->name('wishlist.removeByProduct');
+
+// Comparison Routes
+Route::prefix('compare')->name('compare.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ComparisonController::class, 'index'])->name('index');
+    Route::post('/add/{product}', [\App\Http\Controllers\ComparisonController::class, 'add'])->name('add');
+    Route::delete('/remove/{product}', [\App\Http\Controllers\ComparisonController::class, 'remove'])->name('remove');
+    Route::delete('/clear', [\App\Http\Controllers\ComparisonController::class, 'clear'])->name('clear');
+    Route::get('/count', function() {
+        $count = \App\Models\Comparison::where(function($query) {
+            if (auth()->check()) {
+                $query->where('user_id', auth()->id());
+            } else {
+                $query->where('session_id', session()->getId());
+            }
+        })->count();
+        return response()->json(['count' => $count]);
+    })->name('count');
+});

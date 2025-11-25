@@ -3,178 +3,200 @@
 @section('title', 'All Products - Technorics')
 
 @section('content')
-<!-- Breadcrumb -->
-<div class="bg-gray-50 py-4 border-b">
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-2 text-sm">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-emerald-600">Home</a>
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm mb-6">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">Home</a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-900 font-semibold">All Products</span>
+            <span class="text-gray-900 dark:text-white font-semibold">All Products</span>
         </div>
-    </div>
-</div>
 
-<!-- Main Content -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Filters Sidebar -->
-        <div class="lg:w-64 flex-shrink-0">
-            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Filters</h3>
-                
-                <!-- Categories -->
-                <div class="mb-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Categories</h4>
-                    <div class="space-y-2">
-                        @foreach($categories as $category)
-                        <a href="{{ route('store.category', $category->slug) }}" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 transition">
-                            <span>{{ $category->name }}</span>
-                            <span class="text-sm text-gray-400">{{ $category->products_count }}</span>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Price Range -->
-                <div class="mb-6 border-t pt-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Price Range</h4>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>Under €50</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€50 - €100</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€100 - €200</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€200+</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Rating -->
-                <div class="border-t pt-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Rating</h4>
-                    <div class="space-y-2">
-                        @for($i = 5; $i >= 1; $i--)
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <div class="flex items-center gap-1">
-                                @for($j = 0; $j < $i; $j++)
-                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                </svg>
-                                @endfor
-                                <span class="text-sm text-gray-600">& up</span>
-                            </div>
-                        </label>
-                        @endfor
-                    </div>
-                </div>
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">All Products</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $products->total() }} products found</p>
             </div>
         </div>
 
         <!-- Products Grid -->
-        <div class="flex-1">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">All Products</h1>
-                    <p class="text-gray-600">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @foreach($products as $product)
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition group overflow-hidden border-2 border-transparent hover:border-emerald-200 dark:hover:border-emerald-600">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                    
+                    @if($product->discount_price)
+                    <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}%
+                    </div>
+                    @endif
+
+                    <!-- Wishlist Button -->
+                    @auth
+                    @php
+                        $inWishlist = \App\Models\Wishlist::where('user_id', auth()->id())->where('product_id', $product->id)->exists();
+                    @endphp
+                    <button 
+                        onclick="toggleWishlist({{ $product->id }}, this)"
+                        class="absolute top-4 right-4 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition shadow-lg"
+                        data-in-wishlist="{{ $inWishlist ? 'true' : 'false' }}">
+                        <svg class="w-5 h-5 {{ $inWishlist ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-300' }}" fill="{{ $inWishlist ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
+                    @else
+                    <a href="{{ route('login') }}" class="absolute top-4 right-4 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition shadow-lg">
+                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </a>
+                    @endauth
+
+                    <!-- Compare Button -->
+                    <button 
+                        onclick="addToCompare({{ $product->id }}, this)"
+                        class="compare-btn absolute bottom-4 right-4 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition shadow-lg"
+                        title="Add to compare">
+                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </button>
                 </div>
-                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                    <option>Sort by: Featured</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Newest First</option>
-                    <option>Rating</option>
-                </select>
-            </div>
 
-            <!-- Products Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                @forelse($products as $product)
-                <div class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    <div class="relative h-64 bg-gray-50 overflow-hidden">
-                        @if($product->discount_price)
-                        <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                            SALE
-                        </div>
-                        @endif
-
-                        <a href="{{ route('store.product', $product->slug) }}">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
-                        </a>
-
-                        <button class="absolute top-3 right-3 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
-                            <svg class="w-5 h-5 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                <div class="p-4">
+                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{{ $product->category->name }}</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white mt-1 mb-2 line-clamp-2">{{ $product->name }}</h3>
+                    
+                    <div class="flex items-center gap-1 mb-2">
+                        @for($i = 0; $i < 5; $i++)
+                            <svg class="w-4 h-4 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                        </button>
+                        @endfor
+                        <span class="text-xs text-gray-600 dark:text-gray-400 ml-1">({{ $product->reviews_count }})</span>
                     </div>
 
-                    <div class="p-5">
-                        <div class="text-xs text-emerald-600 font-semibold mb-2">{{ $product->category->name }}</div>
-                        <a href="{{ route('store.product', $product->slug) }}">
-                            <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 h-12 hover:text-emerald-600 transition">{{ $product->name }}</h3>
-                        </a>
-                        
-                        <div class="flex items-center gap-1 mb-4">
-                            @for($i = 0; $i < 5; $i++)
-                                <svg class="w-4 h-4 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                </svg>
-                            @endfor
-                            <span class="text-sm text-gray-500 ml-2">({{ $product->reviews_count }})</span>
-                        </div>
-
-                        <div class="mb-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
                             @if($product->discount_price)
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->discount_price, 2) }}</span>
-                                <span class="text-sm text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl font-bold text-red-600">€{{ number_format($product->discount_price, 2) }}</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
                             </div>
                             @else
-                            <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->price, 2) }}</span>
+                            <span class="text-xl font-bold text-gray-900 dark:text-white">€{{ number_format($product->price, 2) }}</span>
                             @endif
                         </div>
+                    </div>
 
-                        <form action="{{ route('cart.add', $product) }}" method="POST">
+                    <div class="flex gap-2">
+                        <a href="{{ route('store.product', $product->slug) }}" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white text-center py-2 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                            View
+                        </a>
+                        <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1">
                             @csrf
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition transform hover:scale-105 active:scale-95">
+                            <button type="submit" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
                                 Add to Cart
                             </button>
                         </form>
                     </div>
                 </div>
-                @empty
-                <div class="col-span-full text-center py-12">
-                    <p class="text-gray-500 text-lg">No products found</p>
-                </div>
-                @endforelse
             </div>
+            @endforeach
+        </div>
 
-            <!-- Pagination -->
-            <div class="mt-8">
-                {{ $products->links() }}
-            </div>
+        <!-- Pagination -->
+        <div class="mt-8">
+            {{ $products->links() }}
         </div>
     </div>
 </div>
 
-<style>
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+<script>
+function toggleWishlist(productId, button) {
+    const isInWishlist = button.getAttribute('data-in-wishlist') === 'true';
+    const heartIcon = button.querySelector('svg');
+    
+    if (isInWishlist) {
+        heartIcon.classList.remove('text-red-500', 'fill-current');
+        heartIcon.classList.add('text-gray-600', 'dark:text-gray-300');
+        heartIcon.setAttribute('fill', 'none');
+        button.setAttribute('data-in-wishlist', 'false');
+    } else {
+        heartIcon.classList.remove('text-gray-600', 'dark:text-gray-300');
+        heartIcon.classList.add('text-red-500', 'fill-current');
+        heartIcon.setAttribute('fill', 'currentColor');
+        button.setAttribute('data-in-wishlist', 'true');
+    }
+    
+    const url = isInWishlist ? `/wishlist/remove-by-product/${productId}` : `/wishlist/add/${productId}`;
+    const method = isInWishlist ? 'DELETE' : 'POST';
+    
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+        }
+    });
 }
-</style>
+
+function addToCompare(productId, button) {
+    fetch(`/compare/add/${productId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            updateCompareCount();
+            button.classList.add('bg-blue-600');
+            button.querySelector('svg').classList.add('text-white');
+        } else {
+            showToast(data.message, 'error');
+        }
+    });
+}
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+    } text-white font-semibold`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transition = 'all 0.3s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function updateCompareCount() {
+    fetch('/compare/count')
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById('compare-count');
+            if (data.count > 0) {
+                badge.textContent = data.count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        });
+}
+</script>
 @endsection

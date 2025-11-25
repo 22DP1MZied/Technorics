@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Technorics - Electronics Store')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .dropdown:hover .dropdown-menu {
@@ -14,9 +20,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Top Info Bar -->
-    <div class="bg-gray-900 text-white py-2 text-sm">
+    <div class="bg-gray-900 dark:bg-gray-950 text-white py-2 text-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <span>📞 +1 800-123-4567</span>
@@ -24,12 +30,22 @@
             </div>
             <div class="flex items-center gap-4">
                 <span>🚚 Free Shipping on Orders Over €100</span>
+                
+                <!-- Dark Mode Toggle -->
+                <button @click="darkMode = !darkMode" class="p-2 rounded-lg hover:bg-gray-800 transition">
+                    <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg x-show="darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Main Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
@@ -37,13 +53,13 @@
                     <div class="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
                         <span class="text-white font-bold text-xl">TR</span>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">Technorics</span>
+                    <span class="text-2xl font-bold text-gray-900 dark:text-white">Technorics</span>
                 </a>
 
                 <!-- Search Bar -->
                 <div class="hidden md:block flex-1 max-w-2xl mx-8">
                     <form action="{{ route('store.search') }}" method="GET" class="relative">
-                        <input type="text" name="q" placeholder="Search for products..." class="w-full px-6 py-3 border-2 border-gray-300 rounded-full focus:border-emerald-600 focus:outline-none">
+                        <input type="text" name="q" placeholder="Search for products..." class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-full focus:border-emerald-600 focus:outline-none">
                         <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700 transition">
                             Search
                         </button>
@@ -52,50 +68,59 @@
 
                 <!-- Right Icons -->
                 <div class="flex items-center gap-4">
+                    <!-- Compare Button -->
+                    <a href="{{ route('compare.index') }}" class="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" id="compare-btn">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <span class="hidden lg:block text-sm font-semibold text-gray-700 dark:text-gray-300">Compare</span>
+                        <span id="compare-count" class="hidden absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"></span>
+                    </a>
+
                     @auth
                     <!-- Profile Dropdown -->
                     <div class="relative group">
-                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
-                            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                            <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            <span class="hidden lg:block text-sm font-semibold text-gray-700">{{ auth()->user()->name }}</span>
+                            <span class="hidden lg:block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ auth()->user()->name }}</span>
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 My Profile
                             </a>
-                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 My Orders
                             </a>
-                            <a href="{{ route('wishlist.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('wishlist.index') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 Wishlist
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                                <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-gray-700">
                                     Logout
                                 </button>
                             </form>
                         </div>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
-                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('login') }}" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        <span class="hidden lg:block text-sm font-semibold text-gray-700">Login</span>
+                        <span class="hidden lg:block text-sm font-semibold text-gray-700 dark:text-gray-300">Login</span>
                     </a>
                     @endauth
 
                     <!-- Cart -->
-                    <a href="{{ route('cart.index') }}" class="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
-                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('cart.index') }}" class="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
-                        <span class="hidden lg:block text-sm font-semibold text-gray-700">Cart</span>
+                        <span class="hidden lg:block text-sm font-semibold text-gray-700 dark:text-gray-300">Cart</span>
                         @auth
                         @php
                             $cartCount = \App\Models\CartItem::where('user_id', auth()->id())->count();
@@ -111,14 +136,14 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="border-t">
+            <nav class="border-t dark:border-gray-700">
                 <div class="flex items-center justify-center gap-8 py-4">
-                    <a href="{{ route('home') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Home</a>
-                    <a href="{{ route('store.index') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">All Products</a>
+                    <a href="{{ route('home') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Home</a>
+                    <a href="{{ route('store.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">All Products</a>
                     
                     <!-- PC Components Dropdown -->
                     <div class="relative dropdown">
-                        <button class="text-gray-700 hover:text-emerald-600 font-semibold transition flex items-center gap-1">
+                        <button class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition flex items-center gap-1">
                             PC Components
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -126,39 +151,39 @@
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div class="dropdown-menu hidden absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-50">
-                            <a href="{{ route('store.category', 'cpus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                        <div class="dropdown-menu hidden absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 z-50">
+                            <a href="{{ route('store.category', 'cpus') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">CPUs (Processors)</span>
                             </a>
-                            <a href="{{ route('store.category', 'gpus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'gpus') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">Graphics Cards (GPUs)</span>
                             </a>
-                            <a href="{{ route('store.category', 'motherboards') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'motherboards') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">Motherboards</span>
                             </a>
-                            <a href="{{ route('store.category', 'ram') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'ram') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">RAM (Memory)</span>
                             </a>
-                            <a href="{{ route('store.category', 'storage') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'storage') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">Storage (SSD/HDD)</span>
                             </a>
-                            <a href="{{ route('store.category', 'psus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'psus') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">Power Supplies (PSUs)</span>
                             </a>
-                            <a href="{{ route('store.category', 'cases') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'cases') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">PC Cases</span>
                             </a>
-                            <a href="{{ route('store.category', 'cooling') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('store.category', 'cooling') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">Cooling Systems</span>
                             </a>
                         </div>
                     </div>
                     
-                    <a href="{{ route('store.category', 'laptops') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Laptops</a>
-                    <a href="{{ route('store.category', 'monitors') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Monitors</a>
-                    <a href="{{ route('store.category', 'keyboards') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Keyboards</a>
-                    <a href="{{ route('store.category', 'mice') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Mice</a>
-                    <a href="{{ route('store.category', 'headsets') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Headsets</a>
+                    <a href="{{ route('store.category', 'laptops') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Laptops</a>
+                    <a href="{{ route('store.category', 'monitors') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Monitors</a>
+                    <a href="{{ route('store.category', 'keyboards') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Keyboards</a>
+                    <a href="{{ route('store.category', 'mice') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Mice</a>
+                    <a href="{{ route('store.category', 'headsets') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">Headsets</a>
                     <a href="{{ route('store.deals') }}" class="text-red-600 hover:text-red-700 font-semibold transition">🔥 Deals</a>
                 </div>
             </nav>
@@ -166,12 +191,12 @@
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="dark:bg-gray-900">
         @yield('content')
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white mt-16">
+    <footer class="bg-gray-900 dark:bg-gray-950 text-white mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid md:grid-cols-4 gap-8">
                 <!-- Company Info -->
@@ -226,5 +251,25 @@
 
     <!-- AI Assistant Widget -->
     @include('components.ai-assistant')
+
+    <script>
+    // Update compare count on page load
+    function updateCompareCount() {
+        fetch('/compare/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('compare-count');
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+    }
+    
+    // Call on page load
+    updateCompareCount();
+    </script>
 </body>
 </html>
