@@ -12,11 +12,14 @@
             <a href="{{ route('profile.show') }}" class="block px-4 py-3 bg-emerald-50 text-emerald-600 rounded-lg font-semibold">
                 Profile
             </a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
-                Orders
+            <a href="{{ route('orders.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                My Orders
             </a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+            <a href="{{ route('wishlist.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
                 Wishlist
+            </a>
+            <a href="{{ route('profile.password') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                Change Password
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -48,7 +51,7 @@
             </div>
 
             <div class="mt-6 pt-6 border-t">
-                <a href="{{ route('password.request') }}" class="text-emerald-600 font-semibold hover:underline">
+                <a href="{{ route('profile.password') }}" class="text-emerald-600 font-semibold hover:underline">
                     Change Password
                 </a>
             </div>

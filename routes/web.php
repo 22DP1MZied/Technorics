@@ -40,3 +40,22 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth'])->get('/profile', function () {
     return view('profile.show');
 })->name('profile.show');
+
+// Wishlist Routes (require authentication)
+Route::middleware(['auth'])->prefix('wishlist')->group(function () {
+    Route::get('/', [\App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/add/{product}', [\App\Http\Controllers\WishlistController::class, 'add'])->name('wishlist.add');
+    Route::delete('/remove/{wishlist}', [\App\Http\Controllers\WishlistController::class, 'remove'])->name('wishlist.remove');
+});
+
+// Orders Routes (require authentication)
+Route::middleware(['auth'])->prefix('orders')->group(function () {
+    Route::get('/', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/{order}', [\App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+});
+
+// Profile Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/password', [\App\Http\Controllers\ProfileController::class, 'password'])->name('profile.password');
+    Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});

@@ -63,8 +63,11 @@
                             <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
                                 My Profile
                             </a>
-                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
                                 My Orders
+                            </a>
+                            <a href="{{ route('wishlist.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                Wishlist
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
