@@ -54,12 +54,46 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Product added to cart!');
     }
 
+    public function update(Request $request, CartItem $cartItem)
+    {
+        $quantity = $request->input('quantity');
+
+        if ($quantity < 1) {
+            return $this->remove($cartItem);
+        }
+
+        if ($cartItem->product->stock < $quantity) {
+            return back()->with('error', 'Not enough stock available');
+        }
+
+        $cartItem->update(['quantity' => $quantity]);
+
+        return back()->with('success', 'Cart updated!');
+    }
+
+    public function remove(CartItem $cartItem)
+    {
+        $cartItem->delete();
+        return back()->with('success', 'Item removed from cart');
+    }
+
+    public function clear()
+    {
+        if (Auth::check()) {
+            CartItem::where('user_id', Auth::id())->delete();
+        } else {
+            CartItem::where('session_id', session()->getId())->delete();
+        }
+
+        return back()->with('success', 'Cart cleared');
+    }
+
     private function getCartItems()
     {
         if (Auth::check()) {
-            return CartItem::where('user_id', Auth::id())->with('product')->get();
+            return CartItem::where('user_id', Auth::id())->with('product.category')->get();
         } else {
-            return CartItem::where('session_id', session()->getId())->with('product')->get();
+            return CartItem::where('session_id', session()->getId())->with('product.category')->get();
         }
     }
 }
