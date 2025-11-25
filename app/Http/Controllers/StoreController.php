@@ -61,4 +61,15 @@ class StoreController extends Controller
         
         return view('store.search', compact('products', 'query'));
     }
+
+    public function deals()
+    {
+        $products = Product::whereNotNull('discount_price')
+            ->where('is_active', true)
+            ->with('category')
+            ->orderByRaw('((price - discount_price) / price) DESC')
+            ->paginate(12);
+
+        return view('store.deals', compact('products'));
+    }
 }

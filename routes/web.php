@@ -17,6 +17,9 @@ Route::prefix('store')->group(function () {
     Route::get('/search', [StoreController::class, 'search'])->name('store.search');
 });
 
+// Deals Route
+Route::get('/deals', [StoreController::class, 'deals'])->name('store.deals');
+
 // Cart Routes
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index');
@@ -32,14 +35,6 @@ Route::middleware(['auth'])->prefix('checkout')->group(function () {
     Route::post('/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/confirmation/{order}', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
 });
-
-// Authentication Routes (from Breeze)
-require __DIR__.'/auth.php';
-
-// Profile Route
-Route::middleware(['auth'])->get('/profile', function () {
-    return view('profile.show');
-})->name('profile.show');
 
 // Wishlist Routes (require authentication)
 Route::middleware(['auth'])->prefix('wishlist')->group(function () {
@@ -59,3 +54,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/password', [\App\Http\Controllers\ProfileController::class, 'password'])->name('profile.password');
     Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
+
+// Authentication Routes (from Breeze)
+require __DIR__.'/auth.php';
+
+// Pages Routes
+Route::prefix('pages')->name('pages.')->group(function () {
+    Route::get('/contact', [\App\Http\Controllers\PagesController::class, 'contact'])->name('contact');
+    Route::get('/track-order', [\App\Http\Controllers\PagesController::class, 'trackOrder'])->name('track-order');
+    Route::get('/returns', [\App\Http\Controllers\PagesController::class, 'returns'])->name('returns');
+    Route::get('/shipping', [\App\Http\Controllers\PagesController::class, 'shipping'])->name('shipping');
+    Route::get('/about', [\App\Http\Controllers\PagesController::class, 'about'])->name('about');
+    Route::get('/careers', [\App\Http\Controllers\PagesController::class, 'careers'])->name('careers');
+    Route::get('/press', [\App\Http\Controllers\PagesController::class, 'press'])->name('press');
+    Route::get('/blog', [\App\Http\Controllers\PagesController::class, 'blog'])->name('blog');
+});
+
+// AI Assistant Route
+Route::post('/api/ai-assistant/chat', [\App\Http\Controllers\AiAssistantController::class, 'chat'])->name('ai.chat');

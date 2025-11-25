@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Technorics - Electronics Store')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -115,7 +116,7 @@
                     <a href="{{ route('store.category', 'keyboards') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Keyboards</a>
                     <a href="{{ route('store.category', 'mice') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Mice</a>
                     <a href="{{ route('store.category', 'headsets') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Headsets</a>
-                    <a href="#" class="text-red-600 hover:text-red-700 font-semibold transition">🔥 Deals</a>
+                    <a href="{{ route('store.deals') }}" class="text-red-600 hover:text-red-700 font-semibold transition">🔥 Deals</a>
                 </div>
             </nav>
         </div>
@@ -145,10 +146,10 @@
                 <div>
                     <h3 class="font-bold mb-4">Customer Service</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-white">Track Order</a></li>
-                        <li><a href="#" class="hover:text-white">Returns</a></li>
-                        <li><a href="#" class="hover:text-white">Shipping Info</a></li>
+                        <li><a href="{{ route('pages.contact') }}" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="{{ route('pages.track-order') }}" class="hover:text-white">Track Order</a></li>
+                        <li><a href="{{ route('pages.returns') }}" class="hover:text-white">Returns</a></li>
+                        <li><a href="{{ route('pages.shipping') }}" class="hover:text-white">Shipping Info</a></li>
                     </ul>
                 </div>
 
@@ -156,10 +157,10 @@
                 <div>
                     <h3 class="font-bold mb-4">About Us</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white">Our Story</a></li>
-                        <li><a href="#" class="hover:text-white">Careers</a></li>
-                        <li><a href="#" class="hover:text-white">Press</a></li>
-                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                        <li><a href="{{ route('pages.about') }}" class="hover:text-white">Our Story</a></li>
+                        <li><a href="{{ route('pages.careers') }}" class="hover:text-white">Careers</a></li>
+                        <li><a href="{{ route('pages.press') }}" class="hover:text-white">Press</a></li>
+                        <li><a href="{{ route('pages.blog') }}" class="hover:text-white">Blog</a></li>
                     </ul>
                 </div>
 
@@ -179,5 +180,8 @@
             </div>
         </div>
     </footer>
+
+    <!-- AI Assistant Widget -->
+    @include('components.ai-assistant')
 </body>
 </html>
