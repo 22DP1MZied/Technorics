@@ -5,46 +5,74 @@ namespace App\Http\Controllers;
 use App\Models\Wishlist;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
     public function index()
     {
-        $wishlistItems = Wishlist::where('user_id', Auth::id())
+        $wishlistItems = Wishlist::where('user_id', auth()->id())
             ->with('product.category')
             ->get();
-
+        
         return view('wishlist.index', compact('wishlistItems'));
     }
 
     public function add(Product $product)
     {
-        $exists = Wishlist::where('user_id', Auth::id())
+        $exists = Wishlist::where('user_id', auth()->id())
             ->where('product_id', $product->id)
             ->exists();
-
+        
         if ($exists) {
-            return back()->with('info', 'Product already in your wishlist');
+            return response()->json([
+                'success' => false,
+                'message' => 'Product already in wishlist'
+            ]);
         }
-
+        
         Wishlist::create([
-            'user_id' => Auth::id(),
+            'user_id' => auth()->id(),
             'product_id' => $product->id,
         ]);
-
-        return back()->with('success', 'Product added to wishlist!');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Added to wishlist!'
+        ]);
     }
 
     public function remove(Wishlist $wishlist)
     {
-        // Make sure user owns this wishlist item
-        if ($wishlist->user_id !== Auth::id()) {
-            abort(403);
+        if ($wishlist->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 403);
         }
-
+        
         $wishlist->delete();
+        
+        return redirect()->route('wishlist.index')->with('success', 'Removed from wishlist');
+    }
 
-        return back()->with('success', 'Product removed from wishlist');
+    public function removeByProduct($productId)
+    {
+        $wishlist = Wishlist::where('user_id', auth()->id())
+            ->where('product_id', $productId)
+            ->first();
+        
+        if (!$wishlist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product not in wishlist'
+            ]);
+        }
+        
+        $wishlist->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Removed from wishlist!'
+        ]);
     }
 }

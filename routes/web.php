@@ -72,3 +72,13 @@ Route::prefix('pages')->name('pages.')->group(function () {
 
 // AI Assistant Route
 Route::post('/api/ai-assistant/chat', [\App\Http\Controllers\AiAssistantController::class, 'chat'])->name('ai.chat');
+
+// Profile Routes (require authentication)
+Route::middleware(['auth'])->prefix('profile')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/password', [\App\Http\Controllers\ProfileController::class, 'password'])->name('profile.password');
+    Route::put('/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});
+
+// Additional wishlist route for AJAX removal
+Route::middleware(['auth'])->delete('/wishlist/remove-by-product/{product}', [\App\Http\Controllers\WishlistController::class, 'removeByProduct'])->name('wishlist.removeByProduct');

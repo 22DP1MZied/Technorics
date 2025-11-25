@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -112,7 +115,47 @@
                 <div class="flex items-center justify-center gap-8 py-4">
                     <a href="{{ route('home') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Home</a>
                     <a href="{{ route('store.index') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">All Products</a>
+                    
+                    <!-- PC Components Dropdown -->
+                    <div class="relative dropdown">
+                        <button class="text-gray-700 hover:text-emerald-600 font-semibold transition flex items-center gap-1">
+                            PC Components
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown-menu hidden absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-50">
+                            <a href="{{ route('store.category', 'cpus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">CPUs (Processors)</span>
+                            </a>
+                            <a href="{{ route('store.category', 'gpus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">Graphics Cards (GPUs)</span>
+                            </a>
+                            <a href="{{ route('store.category', 'motherboards') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">Motherboards</span>
+                            </a>
+                            <a href="{{ route('store.category', 'ram') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">RAM (Memory)</span>
+                            </a>
+                            <a href="{{ route('store.category', 'storage') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">Storage (SSD/HDD)</span>
+                            </a>
+                            <a href="{{ route('store.category', 'psus') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">Power Supplies (PSUs)</span>
+                            </a>
+                            <a href="{{ route('store.category', 'cases') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">PC Cases</span>
+                            </a>
+                            <a href="{{ route('store.category', 'cooling') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                                <span class="font-semibold">Cooling Systems</span>
+                            </a>
+                        </div>
+                    </div>
+                    
                     <a href="{{ route('store.category', 'laptops') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Laptops</a>
+                    <a href="{{ route('store.category', 'monitors') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Monitors</a>
                     <a href="{{ route('store.category', 'keyboards') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Keyboards</a>
                     <a href="{{ route('store.category', 'mice') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Mice</a>
                     <a href="{{ route('store.category', 'headsets') }}" class="text-gray-700 hover:text-emerald-600 font-semibold transition">Headsets</a>

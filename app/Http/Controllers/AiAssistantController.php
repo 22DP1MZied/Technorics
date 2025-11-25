@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use App\Models\Product;
 use App\Models\Category;
 
@@ -45,29 +46,64 @@ $storeContext
 Be helpful and guide customers to make informed purchases!";
 
         try {
-            $response = Http::timeout(30)->post('https://api.anthropic.com/v1/messages', [
-                'model' => 'claude-sonnet-4-20250514',
-                'max_tokens' => 1024,
-                'system' => $systemPrompt,
-                'messages' => $messages,
-            ]);
+            $apiKey = env('GROQ_API_KEY');
+            
+            if (!$apiKey) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'API key not configured. Please add GROQ_API_KEY to your .env file.',
+                ], 500);
+            }
+
+            // Prepare messages with system prompt
+            $apiMessages = [
+                ['role' => 'system', 'content' => $systemPrompt]
+            ];
+            
+            foreach ($messages as $msg) {
+                $apiMessages[] = [
+                    'role' => $msg['role'],
+                    'content' => $msg['content']
+                ];
+            }
+
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    'model' => 'llama-3.3-70b-versatile',
+                    'messages' => $apiMessages,
+                    'max_tokens' => 1024,
+                    'temperature' => 0.7,
+                ]);
 
             if ($response->successful()) {
                 $data = $response->json();
                 return response()->json([
                     'success' => true,
-                    'message' => $data['content'][0]['text'] ?? 'No response',
+                    'message' => $data['choices'][0]['message']['content'] ?? 'No response',
                 ]);
             } else {
+                Log::error('Groq API Error', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+                
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to get response from AI assistant',
+                    'message' => 'Sorry, I encountered an error. Please try again.',
                 ], 500);
             }
         } catch (\Exception $e) {
+            Log::error('Exception in AI chat', [
+                'error' => $e->getMessage()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Error: ' . $e->getMessage(),
+                'message' => 'Sorry, I encountered an error. Please try again.',
             ], 500);
         }
     }
@@ -86,7 +122,7 @@ Be helpful and guide customers to make informed purchases!";
             $context .= "**{$category->name}** ({$category->products_count} products):\n";
             
             $categoryProducts = $products->get($category->id, collect());
-            foreach ($categoryProducts->take(10) as $product) {
+            foreach ($categoryProducts->take(8) as $product) {
                 $price = $product->discount_price ?? $product->price;
                 $context .= "- {$product->name} by {$product->brand}: €" . number_format($price, 2);
                 if ($product->discount_price) {
