@@ -100,3 +100,9 @@ Route::prefix('compare')->name('compare.')->group(function () {
         return response()->json(['count' => $count]);
     })->name('count');
 });
+
+// Review Routes (require authentication)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/products/{product}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+});

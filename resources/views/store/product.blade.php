@@ -3,229 +3,351 @@
 @section('title', $product->name . ' - Technorics')
 
 @section('content')
-<!-- Breadcrumb -->
-<div class="bg-gray-50 py-4 border-b">
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-2 text-sm">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-emerald-600">Home</a>
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm mb-6">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">Home</a>
             <span class="text-gray-400">/</span>
-            <a href="{{ route('store.index') }}" class="text-gray-600 hover:text-emerald-600">Products</a>
+            <a href="{{ route('store.category', $product->category->slug) }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ $product->category->name }}</a>
             <span class="text-gray-400">/</span>
-            <a href="{{ route('store.category', $product->category->slug) }}" class="text-gray-600 hover:text-emerald-600">{{ $product->category->name }}</a>
-            <span class="text-gray-400">/</span>
-            <span class="text-gray-900 font-semibold">{{ $product->name }}</span>
-        </div>
-    </div>
-</div>
-
-<!-- Product Details -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid md:grid-cols-2 gap-12 mb-16">
-        <!-- Product Image -->
-        <div class="space-y-4">
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-[500px] object-contain p-8">
-            </div>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ $product->name }}</span>
         </div>
 
-        <!-- Product Info -->
-        <div class="space-y-6">
-            <!-- Category -->
-            <div>
-                <a href="{{ route('store.category', $product->category->slug) }}" class="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold hover:bg-emerald-200 transition">
-                    {{ $product->category->name }}
-                </a>
+        <!-- Product Details -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Product Image -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-8">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-auto rounded-lg">
             </div>
 
-            <!-- Title -->
-            <h1 class="text-4xl font-bold text-gray-900">{{ $product->name }}</h1>
-
-            <!-- Rating -->
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1">
-                    @for($i = 0; $i < 5; $i++)
-                        <svg class="w-5 h-5 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
-                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                        </svg>
-                    @endfor
+            <!-- Product Info -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-8">
+                <span class="text-sm text-emerald-600 dark:text-emerald-400 font-semibold">{{ $product->category->name }}</span>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mt-2 mb-4">{{ $product->name }}</h1>
+                
+                <!-- Rating -->
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex items-center gap-1">
+                        @for($i = 0; $i < 5; $i++)
+                            <svg class="w-5 h-5 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        @endfor
+                    </div>
+                    <span class="text-gray-600 dark:text-gray-400">{{ $product->rating }}/5 ({{ $product->reviews_count }} reviews)</span>
                 </div>
-                <span class="text-gray-600">{{ $product->rating }} ({{ $product->reviews_count }} reviews)</span>
-            </div>
 
-            <!-- Price -->
-            <div class="border-t border-b py-6">
-                @if($product->discount_price)
-                <div class="flex items-baseline gap-4">
-                    <span class="text-5xl font-bold text-gray-900">€{{ number_format($product->discount_price, 2) }}</span>
-                    <span class="text-2xl text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
-                    <span class="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-bold">
-                        Save {{ round((($product->price - $product->discount_price) / $product->price) * 100) }}%
+                <!-- Price -->
+                <div class="mb-6">
+                    @if($product->discount_price)
+                    <div class="flex items-center gap-3">
+                        <span class="text-4xl font-bold text-red-600">€{{ number_format($product->discount_price, 2) }}</span>
+                        <span class="text-xl text-gray-500 dark:text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
+                        <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}%
+                        </span>
+                    </div>
+                    @else
+                    <span class="text-4xl font-bold text-gray-900 dark:text-white">€{{ number_format($product->price, 2) }}</span>
+                    @endif
+                </div>
+
+                <!-- Stock Status -->
+                <div class="mb-6">
+                    @if($product->stock > 0)
+                    <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        ✓ In Stock ({{ $product->stock }} available)
                     </span>
-                </div>
-                @else
-                <span class="text-5xl font-bold text-gray-900">€{{ number_format($product->price, 2) }}</span>
-                @endif
-            </div>
-
-            <!-- Stock Status -->
-            <div class="flex items-center gap-3">
-                @if($product->stock > 0)
-                    <div class="flex items-center gap-2 text-green-600">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="font-semibold">In Stock ({{ $product->stock }} available)</span>
-                    </div>
-                @else
-                    <div class="flex items-center gap-2 text-red-600">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="font-semibold">Out of Stock</span>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Description -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Description</h3>
-                <p class="text-gray-600 leading-relaxed">{{ $product->description }}</p>
-            </div>
-
-            <!-- Brand -->
-            @if($product->brand)
-            <div class="flex items-center gap-3">
-                <span class="text-gray-600">Brand:</span>
-                <span class="font-semibold text-gray-900">{{ $product->brand }}</span>
-            </div>
-            @endif
-
-            <!-- Add to Cart -->
-            @if($product->stock > 0)
-            <form action="{{ route('cart.add', $product) }}" method="POST" class="space-y-4">
-                @csrf
-                <div class="flex items-center gap-4">
-                    <label class="text-gray-700 font-semibold">Quantity:</label>
-                    <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
-                        <button type="button" onclick="decrementQty()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                            </svg>
-                        </button>
-                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $product->stock }}" class="w-20 text-center border-0 focus:ring-0 font-semibold">
-                        <button type="button" onclick="incrementQty()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                        </button>
-                    </div>
+                    @else
+                    <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        Out of Stock
+                    </span>
+                    @endif
                 </div>
 
-                <div class="flex gap-4">
-                    <button type="submit" class="flex-1 bg-emerald-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-emerald-700 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        Add to Cart
-                    </button>
-                    <button type="button" class="px-6 py-4 border-2 border-gray-300 rounded-lg hover:border-red-500 hover:text-red-500 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Description -->
+                <div class="mb-6">
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">Description</h3>
+                    <p class="text-gray-600 dark:text-gray-400">{{ $product->description }}</p>
+                </div>
+
+                <!-- Brand -->
+                <div class="mb-6">
+                    <span class="text-gray-600 dark:text-gray-400">Brand: </span>
+                    <span class="font-semibold text-gray-900 dark:text-white">{{ $product->brand }}</span>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1">
+                        @csrf
+                        <button type="submit" class="w-full bg-emerald-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </form>
+
+                    @auth
+                    @php
+                        $inWishlist = \App\Models\Wishlist::where('user_id', auth()->id())->where('product_id', $product->id)->exists();
+                    @endphp
+                    <button 
+                        onclick="toggleWishlist({{ $product->id }}, this)"
+                        class="px-6 py-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+                        data-in-wishlist="{{ $inWishlist ? 'true' : 'false' }}">
+                        <svg class="w-6 h-6 {{ $inWishlist ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-300' }}" fill="{{ $inWishlist ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
                     </button>
-                </div>
-            </form>
-            @else
-            <div class="bg-gray-100 border-2 border-gray-300 rounded-lg p-6 text-center">
-                <p class="text-gray-600 font-semibold mb-2">This product is currently out of stock</p>
-                <button class="text-emerald-600 font-semibold hover:underline">Notify me when available</button>
-            </div>
-            @endif
+                    @else
+                    <a href="{{ route('login') }}" class="px-6 py-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </a>
+                    @endauth
 
-            <!-- Features -->
-            <div class="bg-gray-50 rounded-xl p-6 space-y-3">
-                <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    <span class="text-gray-700">100% Authentic Product</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    <span class="text-gray-700">Free Shipping on Orders €100+</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span class="text-gray-700">30-Day Return Policy</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                    <span class="text-gray-700">1 Year Warranty</span>
+                    <button 
+                        onclick="addToCompare({{ $product->id }}, this)"
+                        class="px-6 py-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Related Products -->
-    @if($relatedProducts->count() > 0)
-    <div class="border-t pt-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8">You May Also Like</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @foreach($relatedProducts as $related)
-            <div class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                <div class="relative h-48 bg-gray-50 overflow-hidden">
-                    <a href="{{ route('store.product', $related->slug) }}">
-                        <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
-                    </a>
-                </div>
-                <div class="p-4">
-                    <a href="{{ route('store.product', $related->slug) }}">
-                        <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 hover:text-emerald-600 transition">{{ $related->name }}</h3>
-                    </a>
-                    <div class="text-xl font-bold text-gray-900">
-                        @if($related->discount_price)
-                            €{{ number_format($related->discount_price, 2) }}
-                        @else
-                            €{{ number_format($related->price, 2) }}
-                        @endif
+        <!-- Reviews Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Customer Reviews</h2>
+
+            <!-- Review Summary -->
+            <div class="mb-8 pb-8 border-b dark:border-gray-700">
+                <div class="flex items-center gap-8">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-gray-900 dark:text-white mb-2">{{ $product->rating }}</div>
+                        <div class="flex items-center gap-1 mb-2">
+                            @for($i = 0; $i < 5; $i++)
+                                <svg class="w-5 h-5 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            @endfor
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Based on {{ $product->reviews_count }} reviews</div>
                     </div>
                 </div>
             </div>
-            @endforeach
+
+            <!-- Write Review Form -->
+            @auth
+            @php
+                $userReview = $product->reviews()->where('user_id', auth()->id())->first();
+            @endphp
+            
+            <div class="mb-8 pb-8 border-b dark:border-gray-700">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    {{ $userReview ? 'Update Your Review' : 'Write a Review' }}
+                </h3>
+                
+                <form action="{{ route('reviews.store', $product) }}" method="POST">
+                    @csrf
+                    
+                    <!-- Star Rating -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Rating</label>
+                        <div class="flex gap-2" id="star-rating">
+                            @for($i = 1; $i <= 5; $i++)
+                            <button type="button" onclick="setRating({{ $i }})" class="star-btn">
+                                <svg class="w-8 h-8 {{ $userReview && $i <= $userReview->rating ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </button>
+                            @endfor
+                        </div>
+                        <input type="hidden" name="rating" id="rating-input" value="{{ $userReview ? $userReview->rating : 5 }}" required>
+                    </div>
+
+                    <!-- Review Comment -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Your Review</label>
+                        <textarea 
+                            name="comment" 
+                            rows="4" 
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none"
+                            placeholder="Share your experience with this product...">{{ $userReview ? $userReview->comment : '' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                        {{ $userReview ? 'Update Review' : 'Submit Review' }}
+                    </button>
+                </form>
+            </div>
+            @else
+            <div class="mb-8 pb-8 border-b dark:border-gray-700">
+                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 text-center">
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Please login to write a review</p>
+                    <a href="{{ route('login') }}" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                        Login to Review
+                    </a>
+                </div>
+            </div>
+            @endauth
+
+            <!-- Reviews List -->
+            <div class="space-y-6">
+                @forelse($product->reviews()->with('user')->latest()->get() as $review)
+                <div class="border-b dark:border-gray-700 pb-6 last:border-0">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-emerald-600 dark:text-emerald-400 font-bold text-lg">
+                                {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                            </span>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ $review->user->name }}</h4>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-1">
+                                            @for($i = 0; $i < 5; $i++)
+                                                <svg class="w-4 h-4 {{ $i < $review->rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                            @endfor
+                                        </div>
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ $review->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                
+                                @auth
+                                @if($review->user_id === auth()->id())
+                                <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-semibold" onclick="return confirm('Are you sure you want to delete this review?')">
+                                        Delete
+                                    </button>
+                                </form>
+                                @endif
+                                @endauth
+                            </div>
+                            
+                            @if($review->comment)
+                            <p class="text-gray-600 dark:text-gray-400">{{ $review->comment }}</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-8">
+                    <p class="text-gray-600 dark:text-gray-400">No reviews yet. Be the first to review this product!</p>
+                </div>
+                @endforelse
+            </div>
         </div>
     </div>
-    @endif
 </div>
 
 <script>
-function incrementQty() {
-    const input = document.getElementById('quantity');
-    const max = parseInt(input.getAttribute('max'));
-    if (parseInt(input.value) < max) {
-        input.value = parseInt(input.value) + 1;
-    }
+function setRating(rating) {
+    document.getElementById('rating-input').value = rating;
+    const stars = document.querySelectorAll('#star-rating svg');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add('text-yellow-400', 'fill-current');
+            star.classList.remove('text-gray-300', 'dark:text-gray-600');
+        } else {
+            star.classList.remove('text-yellow-400', 'fill-current');
+            star.classList.add('text-gray-300', 'dark:text-gray-600');
+        }
+    });
 }
 
-function decrementQty() {
-    const input = document.getElementById('quantity');
-    if (parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
+function toggleWishlist(productId, button) {
+    const isInWishlist = button.getAttribute('data-in-wishlist') === 'true';
+    const heartIcon = button.querySelector('svg');
+    
+    if (isInWishlist) {
+        heartIcon.classList.remove('text-red-500', 'fill-current');
+        heartIcon.classList.add('text-gray-600', 'dark:text-gray-300');
+        heartIcon.setAttribute('fill', 'none');
+        button.setAttribute('data-in-wishlist', 'false');
+    } else {
+        heartIcon.classList.remove('text-gray-600', 'dark:text-gray-300');
+        heartIcon.classList.add('text-red-500', 'fill-current');
+        heartIcon.setAttribute('fill', 'currentColor');
+        button.setAttribute('data-in-wishlist', 'true');
     }
+    
+    const url = isInWishlist ? `/wishlist/remove-by-product/${productId}` : `/wishlist/add/${productId}`;
+    const method = isInWishlist ? 'DELETE' : 'POST';
+    
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+        }
+    });
+}
+
+function addToCompare(productId, button) {
+    fetch(`/compare/add/${productId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            updateCompareCount();
+            button.classList.add('bg-blue-600');
+        } else {
+            showToast(data.message, 'error');
+        }
+    });
+}
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+    } text-white font-semibold`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transition = 'all 0.3s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function updateCompareCount() {
+    fetch('/compare/count')
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById('compare-count');
+            if (data.count > 0) {
+                badge.textContent = data.count;
+                badge.classList.remove('hidden');
+            }
+        });
 }
 </script>
-
-<style>
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-</style>
 @endsection
