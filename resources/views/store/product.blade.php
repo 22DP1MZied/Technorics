@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <div class="flex items-center gap-2 text-sm mb-6">
-            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">Home</a>
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ __('messages.home') }}</a>
             <span class="text-gray-400">/</span>
             <a href="{{ route('store.category', $product->category->slug) }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ $product->category->name }}</a>
             <span class="text-gray-400">/</span>
@@ -35,7 +35,7 @@
                             </svg>
                         @endfor
                     </div>
-                    <span class="text-gray-600 dark:text-gray-400">{{ $product->rating }}/5 ({{ $product->reviews_count }} reviews)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ $product->rating }}/5 ({{ $product->reviews_count }} {{ __('messages.reviews') }})</span>
                 </div>
 
                 <!-- Price -->
@@ -57,24 +57,24 @@
                 <div class="mb-6">
                     @if($product->stock > 0)
                     <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                        ✓ In Stock ({{ $product->stock }} available)
+                        ✓ {{ __('messages.in_stock') }} ({{ $product->stock }} {{ __('messages.available') }})
                     </span>
                     @else
                     <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                        Out of Stock
+                        {{ __('messages.out_of_stock') }}
                     </span>
                     @endif
                 </div>
 
                 <!-- Description -->
                 <div class="mb-6">
-                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">Description</h3>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.description') }}</h3>
                     <p class="text-gray-600 dark:text-gray-400">{{ $product->description }}</p>
                 </div>
 
                 <!-- Brand -->
                 <div class="mb-6">
-                    <span class="text-gray-600 dark:text-gray-400">Brand: </span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('messages.brand') }}: </span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ $product->brand }}</span>
                 </div>
 
@@ -86,7 +86,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
-                            Add to Cart
+                            {{ __('messages.add_to_cart') }}
                         </button>
                     </form>
 
@@ -123,7 +123,7 @@
 
         <!-- Reviews Section -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-8">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Customer Reviews</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ __('messages.customer_reviews') }}</h2>
 
             <!-- Review Summary -->
             <div class="mb-8 pb-8 border-b dark:border-gray-700">
@@ -137,7 +137,7 @@
                                 </svg>
                             @endfor
                         </div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Based on {{ $product->reviews_count }} reviews</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.based_on') }} {{ $product->reviews_count }} {{ __('messages.reviews') }}</div>
                     </div>
                 </div>
             </div>
@@ -150,7 +150,7 @@
             
             <div class="mb-8 pb-8 border-b dark:border-gray-700">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    {{ $userReview ? 'Update Your Review' : 'Write a Review' }}
+                    {{ $userReview ? __('messages.update_review') : __('messages.write_review') }}
                 </h3>
                 
                 <form action="{{ route('reviews.store', $product) }}" method="POST">
@@ -158,7 +158,7 @@
                     
                     <!-- Star Rating -->
                     <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Rating</label>
+                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">{{ __('messages.rating') }}</label>
                         <div class="flex gap-2" id="star-rating">
                             @for($i = 1; $i <= 5; $i++)
                             <button type="button" onclick="setRating({{ $i }})" class="star-btn">
@@ -173,25 +173,25 @@
 
                     <!-- Review Comment -->
                     <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Your Review</label>
+                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">{{ __('messages.your_review') }}</label>
                         <textarea 
                             name="comment" 
                             rows="4" 
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none"
-                            placeholder="Share your experience with this product...">{{ $userReview ? $userReview->comment : '' }}</textarea>
+                            placeholder="{{ __('messages.share_experience') }}">{{ $userReview ? $userReview->comment : '' }}</textarea>
                     </div>
 
                     <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                        {{ $userReview ? 'Update Review' : 'Submit Review' }}
+                        {{ $userReview ? __('messages.update_review_btn') : __('messages.submit_review') }}
                     </button>
                 </form>
             </div>
             @else
             <div class="mb-8 pb-8 border-b dark:border-gray-700">
                 <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 text-center">
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">Please login to write a review</p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('messages.login_to_review') }}</p>
                     <a href="{{ route('login') }}" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                        Login to Review
+                        {{ __('messages.login') }}
                     </a>
                 </div>
             </div>
@@ -229,8 +229,8 @@
                                 <form action="{{ route('reviews.destroy', $review) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-semibold" onclick="return confirm('Are you sure you want to delete this review?')">
-                                        Delete
+                                    <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-semibold" onclick="return confirm('{{ __('messages.delete') }}?')">
+                                        {{ __('messages.delete') }}
                                     </button>
                                 </form>
                                 @endif
@@ -245,7 +245,7 @@
                 </div>
                 @empty
                 <div class="text-center py-8">
-                    <p class="text-gray-600 dark:text-gray-400">No reviews yet. Be the first to review this product!</p>
+                    <p class="text-gray-600 dark:text-gray-400">{{ __('messages.no_reviews_yet') }}</p>
                 </div>
                 @endforelse
             </div>

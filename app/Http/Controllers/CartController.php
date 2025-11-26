@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\CartItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,32 +11,40 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cartItems = $this->getCartItems();
-        $total = $cartItems->sum(function($item) {
-            return $item->product->final_price * $item->quantity;
+        $cartItems = CartItem::with('product')
+            ->where(function($query) {
+                if (Auth::check()) {
+                    $query->where('user_id', Auth::id());
+                } else {
+                    $query->where('session_id', session()->getId());
+                }
+            })
+            ->get();
+
+        $subtotal = $cartItems->sum(function($item) {
+            return $item->price * $item->quantity;
         });
-        
-        return view('cart.index', compact('cartItems', 'total'));
+
+        $tax = $subtotal * 0.21; // 21% VAT
+        $shipping = $subtotal > 100 ? 0 : 10;
+        $total = $subtotal + $tax + $shipping;
+
+        return view('cart.index', compact('cartItems', 'subtotal', 'tax', 'shipping', 'total'));
     }
 
-    public function add(Request $request, Product $product)
+    public function add(Product $product, Request $request)
     {
         $quantity = $request->input('quantity', 1);
 
-        if ($product->stock < $quantity) {
-            return back()->with('error', 'Not enough stock available');
-        }
-
-        if (Auth::check()) {
-            $cartItem = CartItem::where('user_id', Auth::id())
-                ->where('product_id', $product->id)
-                ->first();
-        } else {
-            $sessionId = session()->getId();
-            $cartItem = CartItem::where('session_id', $sessionId)
-                ->where('product_id', $product->id)
-                ->first();
-        }
+        $cartItem = CartItem::where('product_id', $product->id)
+            ->where(function($query) {
+                if (Auth::check()) {
+                    $query->where('user_id', Auth::id());
+                } else {
+                    $query->where('session_id', session()->getId());
+                }
+            })
+            ->first();
 
         if ($cartItem) {
             $cartItem->quantity += $quantity;
@@ -47,53 +55,41 @@ class CartController extends Controller
                 'session_id' => Auth::check() ? null : session()->getId(),
                 'product_id' => $product->id,
                 'quantity' => $quantity,
-                'price' => $product->final_price
+                'price' => $product->discount_price ?? $product->price,
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart!');
+        return redirect()->back()->with('success', 'Product added to cart!');
     }
 
-    public function update(Request $request, CartItem $cartItem)
+    public function update(CartItem $cartItem, Request $request)
     {
-        $quantity = $request->input('quantity');
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
 
-        if ($quantity < 1) {
-            return $this->remove($cartItem);
-        }
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
 
-        if ($cartItem->product->stock < $quantity) {
-            return back()->with('error', 'Not enough stock available');
-        }
-
-        $cartItem->update(['quantity' => $quantity]);
-
-        return back()->with('success', 'Cart updated!');
+        return redirect()->back()->with('success', 'Cart updated!');
     }
 
     public function remove(CartItem $cartItem)
     {
         $cartItem->delete();
-        return back()->with('success', 'Item removed from cart');
+        return redirect()->back()->with('success', 'Product removed from cart!');
     }
 
     public function clear()
     {
-        if (Auth::check()) {
-            CartItem::where('user_id', Auth::id())->delete();
-        } else {
-            CartItem::where('session_id', session()->getId())->delete();
-        }
+        CartItem::where(function($query) {
+            if (Auth::check()) {
+                $query->where('user_id', Auth::id());
+            } else {
+                $query->where('session_id', session()->getId());
+            }
+        })->delete();
 
-        return back()->with('success', 'Cart cleared');
-    }
-
-    private function getCartItems()
-    {
-        if (Auth::check()) {
-            return CartItem::where('user_id', Auth::id())->with('product.category')->get();
-        } else {
-            return CartItem::where('session_id', session()->getId())->with('product.category')->get();
-        }
+        return redirect()->route('home')->with('success', 'Cart cleared!');
     }
 }

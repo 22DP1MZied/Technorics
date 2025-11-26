@@ -3,33 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    public function show()
+    public function update(Request $request)
     {
-        return view('profile.show');
-    }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
+        ]);
 
-    public function password()
-    {
-        return view('profile.change-password');
+        auth()->user()->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Profile updated successfully!');
     }
 
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'current_password' => 'required',
+            'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        $user = Auth::user();
-        $user->password = Hash::make($request->password);
-        $user->save();
+        if (!Hash::check($request->current_password, auth()->user()->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect']);
+        }
 
-        return back()->with('success', 'Password changed successfully!');
+        auth()->user()->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return back()->with('success', 'Password updated successfully!');
     }
 }

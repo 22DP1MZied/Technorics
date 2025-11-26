@@ -106,3 +106,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/products/{product}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
+
+// Language Switcher
+Route::get('/language/{locale}', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');
+
+// Profile Routes (require authentication)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', function() {
+        return view('profile.show');
+    })->name('profile.show');
+    
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
+});

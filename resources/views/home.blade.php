@@ -1,17 +1,17 @@
 @extends('layout')
 
-@section('title', 'Technorics - Premium Electronics Store')
+@section('title', 'Technorics - ' . __('messages.premium_electronics'))
 
 @section('content')
 <!-- Auto-Sliding Announcements -->
 <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white overflow-hidden">
     <div class="announcement-slider py-3">
         <div class="flex animate-slide">
-            <div class="flex-shrink-0 px-8">🎉 New Arrivals: RTX 4090 & Ryzen 9 7950X Now In Stock!</div>
-            <div class="flex-shrink-0 px-8">🚚 FREE Shipping on Orders Over €100</div>
-            <div class="flex-shrink-0 px-8">💰 Save Up to 50% on Gaming Peripherals</div>
-            <div class="flex-shrink-0 px-8">⚡ Flash Sale: Limited Time Offers</div>
-            <div class="flex-shrink-0 px-8">🎮 Build Your Dream Gaming PC Today</div>
+            <div class="flex-shrink-0 px-8">🎉 {{ __('messages.new_arrivals') }}</div>
+            <div class="flex-shrink-0 px-8">🚚 {{ __('messages.free_shipping') }}</div>
+            <div class="flex-shrink-0 px-8">💰 {{ __('messages.save_up_to') }}</div>
+            <div class="flex-shrink-0 px-8">⚡ {{ __('messages.flash_sale') }}</div>
+            <div class="flex-shrink-0 px-8">🎮 {{ __('messages.build_pc') }}</div>
         </div>
     </div>
 </div>
@@ -27,18 +27,18 @@
         <div class="grid md:grid-cols-2 gap-12 items-center">
             <div class="space-y-6">
                 <h1 class="text-5xl md:text-6xl font-bold animate-fade-in-up">
-                    Premium Electronics
-                    <span class="block text-emerald-400">For Gamers & Creators</span>
+                    {{ __('messages.premium_electronics') }}
+                    <span class="block text-emerald-400">{{ __('messages.for_gamers_creators') }}</span>
                 </h1>
                 <p class="text-xl text-gray-300 animate-fade-in-up" style="animation-delay: 0.2s;">
-                    Discover the latest in gaming hardware, PC components, and tech accessories
+                    {{ __('messages.hero_description') }}
                 </p>
                 <div class="flex gap-4 animate-fade-in-up" style="animation-delay: 0.4s;">
                     <a href="{{ route('store.index') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105">
-                        Shop Now
+                        {{ __('messages.shop_now') }}
                     </a>
                     <a href="{{ route('store.deals') }}" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
-                        View Deals
+                        {{ __('messages.view_deals') }}
                     </a>
                 </div>
             </div>
@@ -57,19 +57,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
                 <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 counter" data-target="500">0</div>
-                <div class="text-gray-600 dark:text-gray-400 mt-2">Products</div>
+                <div class="text-gray-600 dark:text-gray-400 mt-2">{{ __('messages.products') }}</div>
             </div>
             <div>
                 <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 counter" data-target="5000">0</div>
-                <div class="text-gray-600 dark:text-gray-400 mt-2">Happy Customers</div>
+                <div class="text-gray-600 dark:text-gray-400 mt-2">{{ __('messages.happy_customers') }}</div>
             </div>
             <div>
                 <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 counter" data-target="30">0</div>
-                <div class="text-gray-600 dark:text-gray-400 mt-2">Countries</div>
+                <div class="text-gray-600 dark:text-gray-400 mt-2">{{ __('messages.countries') }}</div>
             </div>
             <div>
                 <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 counter" data-target="99">0</div>
-                <div class="text-gray-600 dark:text-gray-400 mt-2">Satisfaction %</div>
+                <div class="text-gray-600 dark:text-gray-400 mt-2">{{ __('messages.satisfaction') }}</div>
             </div>
         </div>
     </div>
@@ -80,21 +80,21 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h2 class="text-3xl font-bold">⚡ Flash Deals</h2>
-                <p class="text-red-100 mt-2">Hurry! Deals end soon</p>
+                <h2 class="text-3xl font-bold">⚡ {{ __('messages.flash_deals') }}</h2>
+                <p class="text-red-100 mt-2">{{ __('messages.deals_end_soon') }}</p>
             </div>
             <div class="flex gap-4 text-center">
                 <div class="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-lg">
                     <div class="text-2xl font-bold" id="hours">00</div>
-                    <div class="text-xs">Hours</div>
+                    <div class="text-xs">{{ __('messages.hours') }}</div>
                 </div>
                 <div class="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-lg">
                     <div class="text-2xl font-bold" id="minutes">00</div>
-                    <div class="text-xs">Minutes</div>
+                    <div class="text-xs">{{ __('messages.minutes') }}</div>
                 </div>
                 <div class="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-lg">
                     <div class="text-2xl font-bold" id="seconds">00</div>
-                    <div class="text-xs">Seconds</div>
+                    <div class="text-xs">{{ __('messages.seconds') }}</div>
                 </div>
             </div>
         </div>
@@ -114,7 +114,7 @@
                 <div class="relative">
                     <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-48 object-cover group-hover:scale-110 transition duration-300">
                     <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">
-                        -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}% OFF
+                        -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}% {{ __('messages.off') }}
                     </div>
                 </div>
                 <div class="p-4">
@@ -124,7 +124,7 @@
                         <span class="text-sm text-gray-500 dark:text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
                     </div>
                     <a href="{{ route('store.product', $product->slug) }}" class="block w-full bg-red-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-red-700 transition">
-                        Grab Deal
+                        {{ __('messages.grab_deal') }}
                     </a>
                 </div>
             </div>
@@ -138,11 +138,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Featured Products</h2>
-                <p class="text-gray-600 dark:text-gray-400 mt-2">Handpicked products just for you</p>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">{{ __('messages.featured_products') }}</h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">{{ __('messages.handpicked_products') }}</p>
             </div>
             <a href="{{ route('store.index') }}" class="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 flex items-center gap-2">
-                View All
+                {{ __('messages.view_all') }}
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
@@ -170,7 +170,7 @@
                         class="wishlist-btn absolute top-4 right-4 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition shadow-lg"
                         data-product-id="{{ $product->id }}"
                         data-in-wishlist="{{ $inWishlist ? 'true' : 'false' }}">
-                        <svg class="w-5 h-5 {{ $inWishlist ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-300' }} hover:scale-110 transition" fill="{{ $inWishlist ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 {{ $inWishlist ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-300' }}" fill="{{ $inWishlist ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
                     </button>
@@ -182,7 +182,6 @@
                     </a>
                     @endauth
 
-                    <!-- Compare Button -->
                     <button 
                         onclick="addToCompare({{ $product->id }}, this)"
                         class="compare-btn absolute bottom-4 right-4 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition shadow-lg"
@@ -221,12 +220,12 @@
 
                     <div class="flex gap-2">
                         <a href="{{ route('store.product', $product->slug) }}" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white text-center py-2 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                            View
+                            {{ __('messages.view') }}
                         </a>
                         <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                                Add to Cart
+                                {{ __('messages.add_to_cart') }}
                             </button>
                         </form>
                     </div>
@@ -240,7 +239,7 @@
 <!-- Categories Section -->
 <div class="bg-gray-100 dark:bg-gray-800 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Shop by Category</h2>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">{{ __('messages.shop_by_category') }}</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             @foreach($categories as $category)
             <a href="{{ route('store.category', $category->slug) }}" class="bg-white dark:bg-gray-700 rounded-xl p-6 text-center hover:shadow-lg transition group">
@@ -248,7 +247,7 @@
                     <span class="text-2xl">🖥️</span>
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $category->name }}</h3>
-                <span class="text-xs text-gray-600 dark:text-gray-400">{{ $category->products_count }} items</span>
+                <span class="text-xs text-gray-600 dark:text-gray-400">{{ $category->products_count }} {{ __('messages.items') }}</span>
             </a>
             @endforeach
         </div>
@@ -258,7 +257,7 @@
 <!-- Why Choose Us -->
 <div class="bg-white dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">Why Choose Technorics?</h2>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">{{ __('messages.why_choose_us') }}</h2>
         <div class="grid md:grid-cols-4 gap-8">
             <div class="text-center">
                 <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -266,8 +265,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">Authentic Products</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">100% genuine products from authorized dealers</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.authentic_products') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.authentic_desc') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -275,8 +274,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">Fast Shipping</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">Free shipping on orders over €100</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.fast_shipping') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.fast_shipping_desc') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -284,8 +283,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">Best Prices</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">Competitive pricing with exclusive deals</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.best_prices') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.best_prices_desc') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -293,8 +292,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">24/7 Support</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">Expert customer support anytime</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.support_247') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.support_desc') }}</p>
             </div>
         </div>
     </div>
