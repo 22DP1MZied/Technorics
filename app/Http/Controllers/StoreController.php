@@ -13,7 +13,136 @@ class StoreController extends Controller
         $query = Product::with('category')
             ->where('is_active', true);
 
-        // Category Filter
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
+
+        // Sorting
+        $query = $this->applySorting($query, $request);
+
+        $products = $query->paginate(12);
+
+        // Get all categories with product count
+        $categories = Category::withCount('products')->get();
+
+        // Get all unique brands
+        $brands = Product::where('is_active', true)
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.index', compact('products', 'categories', 'brands'));
+    }
+
+    public function show($slug)
+    {
+        $product = Product::with(['category', 'reviews.user'])
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        return view('store.product', compact('product'));
+    }
+
+    public function category($slug, Request $request)
+    {
+        $category = Category::where('slug', $slug)->firstOrFail();
+        
+        $query = Product::with('category')
+            ->where('category_id', $category->id)
+            ->where('is_active', true);
+
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
+
+        // Sorting
+        $query = $this->applySorting($query, $request);
+
+        $products = $query->paginate(12);
+
+        // Get all categories with product count
+        $categories = Category::withCount('products')->get();
+
+        // Get unique brands for this category
+        $brands = Product::where('category_id', $category->id)
+            ->where('is_active', true)
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.category', compact('category', 'products', 'categories', 'brands'));
+    }
+
+    public function deals(Request $request)
+    {
+        $query = Product::with('category')
+            ->whereNotNull('discount_price')
+            ->where('is_active', true);
+
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
+
+        // Sorting
+        $query = $this->applySorting($query, $request);
+
+        $products = $query->paginate(12);
+
+        // Get all categories with product count
+        $categories = Category::withCount('products')->get();
+
+        // Get all unique brands
+        $brands = Product::whereNotNull('discount_price')
+            ->where('is_active', true)
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.deals', compact('products', 'categories', 'brands'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        
+        $productsQuery = Product::with('category')
+            ->where('is_active', true)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhere('brand', 'like', "%{$query}%");
+            });
+
+        // Apply filters
+        $productsQuery = $this->applyFilters($productsQuery, $request);
+
+        // Sorting
+        $productsQuery = $this->applySorting($productsQuery, $request);
+
+        $products = $productsQuery->paginate(12);
+
+        // Get all categories with product count
+        $categories = Category::withCount('products')->get();
+
+        // Get all unique brands from search results
+        $brands = Product::where('is_active', true)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhere('brand', 'like', "%{$query}%");
+            })
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.search', compact('products', 'query', 'categories', 'brands'));
+    }
+
+    private function applyFilters($query, $request)
+    {
+        // Category Filter (for main store page only)
         if ($request->has('category') && !empty($request->category)) {
             $query->whereHas('category', function($q) use ($request) {
                 $q->whereIn('slug', $request->category);
@@ -50,8 +179,13 @@ class StoreController extends Controller
             $query->whereNotNull('discount_price');
         }
 
-        // Sorting
+        return $query;
+    }
+
+    private function applySorting($query, $request)
+    {
         $sort = $request->get('sort', 'newest');
+        
         switch ($sort) {
             case 'price_low':
                 $query->orderByRaw('COALESCE(discount_price, price) ASC');
@@ -69,69 +203,6 @@ class StoreController extends Controller
                 $query->orderBy('created_at', 'DESC');
         }
 
-        $products = $query->paginate(12);
-
-        // Get all categories with product count
-        $categories = Category::withCount('products')->get();
-
-        // Get all unique brands
-        $brands = Product::where('is_active', true)
-            ->distinct()
-            ->orderBy('brand')
-            ->pluck('brand')
-            ->filter();
-
-        return view('store.index', compact('products', 'categories', 'brands'));
-    }
-
-    public function show($slug)
-    {
-        $product = Product::with(['category', 'reviews.user'])
-            ->where('slug', $slug)
-            ->where('is_active', true)
-            ->firstOrFail();
-
-        return view('store.product', compact('product'));
-    }
-
-    public function category($slug)
-    {
-        $category = Category::where('slug', $slug)->firstOrFail();
-        
-        $products = Product::with('category')
-            ->where('category_id', $category->id)
-            ->where('is_active', true)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(12);
-
-        return view('store.category', compact('category', 'products'));
-    }
-
-    public function deals()
-    {
-        $products = Product::with('category')
-            ->whereNotNull('discount_price')
-            ->where('is_active', true)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(12);
-
-        return view('store.deals', compact('products'));
-    }
-
-    public function search(Request $request)
-    {
-        $query = $request->input('q');
-        
-        $products = Product::with('category')
-            ->where('is_active', true)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhere('brand', 'like', "%{$query}%");
-            })
-            ->orderBy('created_at', 'DESC')
-            ->paginate(12);
-
-        return view('store.search', compact('products', 'query'));
+        return $query;
     }
 }

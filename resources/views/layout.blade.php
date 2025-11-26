@@ -15,9 +15,6 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -31,7 +28,7 @@
             <div class="flex items-center gap-4">
                 <span>🚚 {{ __('messages.free_shipping') }}</span>
                 
-                <!-- Language Switcher - FIXED -->
+                <!-- Language Switcher -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-800 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,8 +175,8 @@
                     <a href="{{ route('home') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">{{ __('messages.home') }}</a>
                     <a href="{{ route('store.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">{{ __('messages.all_products') }}</a>
                     
-                    <!-- PC Components Dropdown -->
-                    <div class="relative dropdown">
+                    <!-- PC Components Dropdown - FIXED -->
+                    <div class="relative group">
                         <button class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition flex items-center gap-1">
                             {{ __('messages.pc_components') }}
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,8 +184,8 @@
                             </svg>
                         </button>
                         
-                        <!-- Dropdown Menu -->
-                        <div class="dropdown-menu hidden absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 z-50">
+                        <!-- Dropdown Menu - No gap, appears immediately on hover -->
+                        <div class="absolute left-0 top-full w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <a href="{{ route('store.category', 'cpus') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">CPUs (Processors)</span>
                             </a>

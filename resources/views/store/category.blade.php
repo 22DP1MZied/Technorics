@@ -3,195 +3,157 @@
 @section('title', $category->name . ' - Technorics')
 
 @section('content')
-<!-- Breadcrumb -->
-<div class="bg-gray-50 py-4 border-b">
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-2 text-sm">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-emerald-600">Home</a>
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm mb-6">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ __('messages.home') }}</a>
             <span class="text-gray-400">/</span>
-            <a href="{{ route('store.index') }}" class="text-gray-600 hover:text-emerald-600">Products</a>
-            <span class="text-gray-400">/</span>
-            <span class="text-gray-900 font-semibold">{{ $category->name }}</span>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ $category->name }}</span>
         </div>
-    </div>
-</div>
 
-<!-- Category Header -->
-<div class="bg-gradient-to-r from-emerald-600 to-teal-600 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{{ $category->name }}</h1>
-        <p class="text-emerald-100 text-lg">{{ $category->description }}</p>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Filters Sidebar -->
-        <div class="lg:w-64 flex-shrink-0">
-            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Filters</h3>
-                
-                <!-- Price Range -->
-                <div class="mb-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Price Range</h4>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>Under €50</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€50 - €100</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€100 - €200</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€200 - €500</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <span>€500+</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- On Sale -->
-                <div class="mb-6 border-t pt-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Special Offers</h4>
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="rounded text-emerald-600">
-                        <span>On Sale</span>
-                    </label>
-                </div>
-
-                <!-- Rating -->
-                <div class="border-t pt-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Rating</h4>
-                    <div class="space-y-2">
-                        @for($i = 5; $i >= 1; $i--)
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" class="rounded text-emerald-600">
-                            <div class="flex items-center gap-1">
-                                @for($j = 0; $j < $i; $j++)
-                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                </svg>
-                                @endfor
-                                <span class="text-sm text-gray-600">& up</span>
-                            </div>
-                        </label>
-                        @endfor
-                    </div>
-                </div>
-
-                <!-- Back to All Products -->
-                <div class="mt-6 pt-6 border-t">
-                    <a href="{{ route('store.index') }}" class="block text-center py-2 text-emerald-600 hover:text-emerald-700 font-semibold">
-                        ← View All Products
-                    </a>
-                </div>
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $category->name }}</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $products->total() }} {{ __('messages.products') }}</p>
             </div>
         </div>
 
-        <!-- Products Grid -->
-        <div class="flex-1">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
-                <p class="text-gray-600">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
-                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                    <option>Sort by: Featured</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Newest First</option>
-                    <option>Rating</option>
-                </select>
-            </div>
-
-            @if($products->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                @foreach($products as $product)
-                <div class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    <div class="relative h-64 bg-gray-50 overflow-hidden">
-                        @if($product->discount_price)
-                        <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                            SALE
-                        </div>
+        <div class="flex gap-8">
+            <!-- Filters Sidebar -->
+            <div class="w-64 flex-shrink-0">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 sticky top-24">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('messages.filters') }}</h2>
+                        @if(request()->hasAny(['brand', 'min_price', 'max_price', 'in_stock', 'on_sale']))
+                        <a href="{{ route('store.category', $category->slug) }}" class="text-sm text-red-600 hover:text-red-700">{{ __('messages.clear_all') }}</a>
                         @endif
-
-                        <a href="{{ route('store.product', $product->slug) }}">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
-                        </a>
-
-                        <button class="absolute top-3 right-3 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
-                            <svg class="w-5 h-5 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                        </button>
                     </div>
 
-                    <div class="p-5">
-                        <a href="{{ route('store.product', $product->slug) }}">
-                            <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 h-12 hover:text-emerald-600 transition">{{ $product->name }}</h3>
-                        </a>
-                        
-                        <div class="flex items-center gap-1 mb-4">
-                            @for($i = 0; $i < 5; $i++)
-                                <svg class="w-4 h-4 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                </svg>
-                            @endfor
-                            <span class="text-sm text-gray-500 ml-2">({{ $product->reviews_count }})</span>
-                        </div>
-
-                        <div class="mb-4">
-                            @if($product->discount_price)
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->discount_price, 2) }}</span>
-                                <span class="text-sm text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
+                    <form action="{{ route('store.category', $category->slug) }}" method="GET" id="filter-form">
+                        <!-- Price Range Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.price_range') }}</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs text-gray-600 dark:text-gray-400">{{ __('messages.min_price') }}</label>
+                                    <input 
+                                        type="number" 
+                                        name="min_price" 
+                                        value="{{ request('min_price') }}"
+                                        placeholder="€0"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-600 dark:text-gray-400">{{ __('messages.max_price') }}</label>
+                                    <input 
+                                        type="number" 
+                                        name="max_price" 
+                                        value="{{ request('max_price') }}"
+                                        placeholder="€10000"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <button type="submit" class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition text-sm">
+                                    {{ __('messages.apply') }}
+                                </button>
                             </div>
-                            @else
-                            <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->price, 2) }}</span>
-                            @endif
                         </div>
 
-                        <form action="{{ route('cart.add', $product) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition transform hover:scale-105 active:scale-95">
-                                Add to Cart
-                            </button>
-                        </form>
-                    </div>
+                        <!-- Brand Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.brand') }}</h3>
+                            <div class="space-y-2 max-h-48 overflow-y-auto">
+                                @foreach($brands as $brand)
+                                <label class="flex items-center cursor-pointer group">
+                                    <input 
+                                        type="checkbox" 
+                                        name="brand[]" 
+                                        value="{{ $brand }}"
+                                        {{ in_array($brand, request('brand', [])) ? 'checked' : '' }}
+                                        onchange="document.getElementById('filter-form').submit()"
+                                        class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                        {{ $brand }}
+                                    </span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Stock Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.availability') }}</h3>
+                            <label class="flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    name="in_stock" 
+                                    value="1"
+                                    {{ request('in_stock') ? 'checked' : '' }}
+                                    onchange="document.getElementById('filter-form').submit()"
+                                    class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                    {{ __('messages.in_stock_only') }}
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Discount Filter -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.special_offers') }}</h3>
+                            <label class="flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    name="on_sale" 
+                                    value="1"
+                                    {{ request('on_sale') ? 'checked' : '' }}
+                                    onchange="document.getElementById('filter-form').submit()"
+                                    class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                    {{ __('messages.on_sale') }}
+                                </span>
+                            </label>
+                        </div>
+                    </form>
                 </div>
-                @endforeach
             </div>
 
-            <!-- Pagination -->
-            <div class="mt-8">
-                {{ $products->links() }}
+            <!-- Products Grid -->
+            <div class="flex-1">
+                <!-- Sort Options -->
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-gray-600 dark:text-gray-400">
+                        {{ __('messages.showing') }} {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} {{ __('messages.of') }} {{ $products->total() }}
+                    </p>
+                    <form action="{{ route('store.category', $category->slug) }}" method="GET" class="flex items-center gap-2">
+                        <!-- Preserve filters -->
+                        @foreach(request()->except('sort') as $key => $value)
+                            @if(is_array($value))
+                                @foreach($value as $v)
+                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                                @endforeach
+                            @else
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endif
+                        @endforeach
+                        
+                        <select name="sort" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('messages.newest') }}</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>{{ __('messages.price_low_high') }}</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>{{ __('messages.price_high_low') }}</option>
+                            <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>{{ __('messages.name_a_z') }}</option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>{{ __('messages.highest_rated') }}</option>
+                        </select>
+                    </form>
+                </div>
+
+                @include('store.partials.product-grid', ['products' => $products])
+
+                <!-- Pagination -->
+                <div class="mt-8">
+                    {{ $products->appends(request()->query())->links() }}
+                </div>
             </div>
-            @else
-            <div class="text-center py-16">
-                <p class="text-gray-500 text-lg">No products found in this category</p>
-                <a href="{{ route('store.index') }}" class="inline-block mt-6 px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
-                    View All Products
-                </a>
-            </div>
-            @endif
         </div>
     </div>
 </div>
-
-<style>
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-</style>
 @endsection
