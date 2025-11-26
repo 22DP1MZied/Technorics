@@ -12,11 +12,6 @@ class Review extends Model
         'product_id',
         'rating',
         'comment',
-        'is_verified_purchase',
-    ];
-
-    protected $casts = [
-        'is_verified_purchase' => 'boolean',
     ];
 
     public function user(): BelongsTo

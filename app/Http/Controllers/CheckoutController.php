@@ -19,8 +19,10 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
+        // FIX: Use discount_price ?? price instead of final_price
         $subtotal = $cartItems->sum(function($item) {
-            return $item->product->final_price * $item->quantity;
+            $price = $item->product->discount_price ?? $item->product->price;
+            return $price * $item->quantity;
         });
 
         $shipping = $subtotal >= 100 ? 0 : 9.99;
@@ -51,8 +53,10 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
+        // FIX: Use discount_price ?? price instead of final_price
         $subtotal = $cartItems->sum(function($item) {
-            return $item->product->final_price * $item->quantity;
+            $price = $item->product->discount_price ?? $item->product->price;
+            return $price * $item->quantity;
         });
 
         $shipping = $subtotal >= 100 ? 0 : 9.99;
@@ -85,12 +89,15 @@ class CheckoutController extends Controller
 
             // Create order items and update stock
             foreach ($cartItems as $item) {
+                // FIX: Use discount_price ?? price instead of final_price
+                $price = $item->product->discount_price ?? $item->product->price;
+                
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
-                    'price' => $item->product->final_price,
-                    'total' => $item->product->final_price * $item->quantity,
+                    'price' => $price,
+                    'total' => $price * $item->quantity,
                 ]);
 
                 // Decrease stock

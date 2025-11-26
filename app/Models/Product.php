@@ -2,63 +2,52 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'category_id',
         'name',
         'slug',
         'description',
         'price',
         'discount_price',
-        'image_url',
-        'images',
         'stock',
-        'rating',
-        'reviews_count',
+        'category_id',
         'brand',
-        'specifications',
-        'is_featured',
+        'image_url',
         'is_active',
+        'is_featured',
+        'specifications',
     ];
 
     protected $casts = [
-        'images' => 'array',
         'specifications' => 'array',
-        'is_featured' => 'boolean',
         'is_active' => 'boolean',
+        'is_featured' => 'boolean',
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
-        'rating' => 'decimal:1',
     ];
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function cartItems()
+    public function reviews(): HasMany
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(Review::class);
     }
 
-    public function orderItems()
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function wishlistItems()
+    public function cartItems(): HasMany
     {
-        return $this->hasMany(Wishlist::class);
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(CartItem::class);
     }
 }
