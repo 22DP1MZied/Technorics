@@ -1,109 +1,203 @@
 @extends('layout')
 
-@section('title', 'Search Results - Technorics')
+@section('title', __('messages.search_results_for') . ' "' . $query . '" - Technorics')
 
 @section('content')
-<!-- Breadcrumb -->
-<div class="bg-gray-50 py-4 border-b">
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-2 text-sm">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-emerald-600">Home</a>
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm mb-6">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ __('messages.home') }}</a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-900 font-semibold">Search Results</span>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ __('messages.search_results') }}</span>
         </div>
-    </div>
-</div>
 
-<!-- Search Header -->
-<div class="bg-gray-100 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">Search Results for "{{ $query }}"</h1>
-        <p class="text-gray-600">Found {{ $products->total() }} products</p>
-    </div>
-</div>
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                {{ __('messages.search_results_for') }} "<span class="text-emerald-600">{{ $query }}</span>"
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">{{ $products->total() }} {{ __('messages.products') }} {{ __('messages.found') }}</p>
+        </div>
 
-<!-- Products Grid -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    @if($products->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-        @foreach($products as $product)
-        <div class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div class="relative h-64 bg-gray-50 overflow-hidden">
-                @if($product->discount_price)
-                <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                    SALE
-                </div>
-                @endif
-
-                <a href="{{ route('store.product', $product->slug) }}">
-                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
-                </a>
-            </div>
-
-            <div class="p-5">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">{{ $product->category->name }}</div>
-                <a href="{{ route('store.product', $product->slug) }}">
-                    <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 h-12 hover:text-emerald-600 transition">{{ $product->name }}</h3>
-                </a>
-                
-                <div class="flex items-center gap-1 mb-4">
-                    @for($i = 0; $i < 5; $i++)
-                        <svg class="w-4 h-4 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
-                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                        </svg>
-                    @endfor
-                    <span class="text-sm text-gray-500 ml-2">({{ $product->reviews_count }})</span>
-                </div>
-
-                <div class="mb-4">
-                    @if($product->discount_price)
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->discount_price, 2) }}</span>
-                        <span class="text-sm text-gray-400 line-through">€{{ number_format($product->price, 2) }}</span>
+        @if($products->total() > 0)
+        <div class="flex gap-8">
+            <!-- Filters Sidebar -->
+            <div class="w-64 flex-shrink-0">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 sticky top-24">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('messages.filters') }}</h2>
+                        @if(request()->hasAny(['category', 'brand', 'min_price', 'max_price', 'in_stock', 'on_sale']))
+                        <a href="{{ route('store.search', ['q' => $query]) }}" class="text-sm text-red-600 hover:text-red-700">{{ __('messages.clear_all') }}</a>
+                        @endif
                     </div>
-                    @else
-                    <span class="text-2xl font-bold text-gray-900">€{{ number_format($product->price, 2) }}</span>
-                    @endif
+
+                    <form action="{{ route('store.search') }}" method="GET" id="filter-form">
+                        <input type="hidden" name="q" value="{{ $query }}">
+                        
+                        <!-- Category Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.category') }}</h3>
+                            <div class="space-y-2">
+                                @foreach($categories as $category)
+                                <label class="flex items-center cursor-pointer group">
+                                    <input 
+                                        type="checkbox" 
+                                        name="category[]" 
+                                        value="{{ $category->slug }}"
+                                        {{ in_array($category->slug, request('category', [])) ? 'checked' : '' }}
+                                        onchange="document.getElementById('filter-form').submit()"
+                                        class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                        {{ $category->name }}
+                                    </span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.price_range') }}</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs text-gray-600 dark:text-gray-400">{{ __('messages.min_price') }}</label>
+                                    <input 
+                                        type="number" 
+                                        name="min_price" 
+                                        value="{{ request('min_price') }}"
+                                        placeholder="€0"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-600 dark:text-gray-400">{{ __('messages.max_price') }}</label>
+                                    <input 
+                                        type="number" 
+                                        name="max_price" 
+                                        value="{{ request('max_price') }}"
+                                        placeholder="€10000"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <button type="submit" class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition text-sm">
+                                    {{ __('messages.apply') }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Brand Filter -->
+                        @if($brands->count() > 0)
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.brand') }}</h3>
+                            <div class="space-y-2 max-h-48 overflow-y-auto">
+                                @foreach($brands as $brand)
+                                <label class="flex items-center cursor-pointer group">
+                                    <input 
+                                        type="checkbox" 
+                                        name="brand[]" 
+                                        value="{{ $brand }}"
+                                        {{ in_array($brand, request('brand', [])) ? 'checked' : '' }}
+                                        onchange="document.getElementById('filter-form').submit()"
+                                        class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                        {{ $brand }}
+                                    </span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Stock Filter -->
+                        <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.availability') }}</h3>
+                            <label class="flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    name="in_stock" 
+                                    value="1"
+                                    {{ request('in_stock') ? 'checked' : '' }}
+                                    onchange="document.getElementById('filter-form').submit()"
+                                    class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                    {{ __('messages.in_stock_only') }}
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Discount Filter -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">{{ __('messages.special_offers') }}</h3>
+                            <label class="flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    name="on_sale" 
+                                    value="1"
+                                    {{ request('on_sale') ? 'checked' : '' }}
+                                    onchange="document.getElementById('filter-form').submit()"
+                                    class="w-4 h-4 text-emerald-600 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 group-hover:text-emerald-600">
+                                    {{ __('messages.on_sale') }}
+                                </span>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="flex-1">
+                <!-- Sort Options -->
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-gray-600 dark:text-gray-400">
+                        {{ __('messages.showing') }} {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} {{ __('messages.of') }} {{ $products->total() }}
+                    </p>
+                    <form action="{{ route('store.search') }}" method="GET" class="flex items-center gap-2">
+                        <input type="hidden" name="q" value="{{ $query }}">
+                        
+                        <!-- Preserve filters -->
+                        @foreach(request()->except(['sort', 'q']) as $key => $value)
+                            @if(is_array($value))
+                                @foreach($value as $v)
+                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                                @endforeach
+                            @else
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endif
+                        @endforeach
+                        
+                        <select name="sort" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                            <option value="relevance" {{ request('sort') == 'relevance' ? 'selected' : '' }}>{{ __('messages.most_relevant') }}</option>
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('messages.newest') }}</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>{{ __('messages.price_low_high') }}</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>{{ __('messages.price_high_low') }}</option>
+                            <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>{{ __('messages.name_a_z') }}</option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>{{ __('messages.highest_rated') }}</option>
+                        </select>
+                    </form>
                 </div>
 
-                <form action="{{ route('cart.add', $product) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition transform hover:scale-105 active:scale-95">
-                        Add to Cart
-                    </button>
-                </form>
+                @include('store.partials.product-grid', ['products' => $products])
+
+                <!-- Pagination -->
+                <div class="mt-8">
+                    {{ $products->appends(request()->query())->links() }}
+                </div>
             </div>
         </div>
-        @endforeach
-    </div>
-
-    <!-- Pagination -->
-    <div class="mt-8">
-        {{ $products->appends(['q' => $query])->links() }}
-    </div>
-    @else
-    <div class="text-center py-16">
-        <div class="inline-block p-8 bg-gray-100 rounded-full mb-6">
-            <svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
+        @else
+        <!-- No Results -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.no_results_for') }} "{{ $query }}"</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">{{ __('messages.try_different_keywords') }}</p>
+            <a href="{{ route('store.index') }}" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                {{ __('messages.browse_products') }}
+            </a>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-4">No results found</h2>
-        <p class="text-gray-600 mb-8">We couldn't find any products matching "{{ $query }}"</p>
-        <a href="{{ route('store.index') }}" class="inline-block px-8 py-4 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
-            Browse All Products
-        </a>
+        @endif
     </div>
-    @endif
 </div>
-
-<style>
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-</style>
 @endsection

@@ -199,4 +199,12 @@ return [
     'name_a_z' => 'Название: А до Я',
     'highest_rated' => 'С высоким рейтингом',
     'no_products_found' => 'Товары не найдены',
+    
+    // Search
+    'search_results_for' => 'Результаты поиска для',
+    'search_results' => 'Результаты поиска',
+    'no_results_for' => 'Нет результатов для',
+    'try_different_keywords' => 'Попробуйте другие ключевые слова или просмотрите наши категории',
+    'found' => 'найдено',
+    'most_relevant' => 'Наиболее релевантные',
 ];

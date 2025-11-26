@@ -199,4 +199,12 @@ return [
     'name_a_z' => 'Nosaukums: A līdz Z',
     'highest_rated' => 'Augstāk vērtētie',
     'no_products_found' => 'Produkti nav atrasti',
+    
+    // Search
+    'search_results_for' => 'Meklēšanas rezultāti',
+    'search_results' => 'Meklēšanas rezultāti',
+    'no_results_for' => 'Nav rezultātu',
+    'try_different_keywords' => 'Mēģiniet citus atslēgvārdus vai pārlūkojiet mūsu kategorijas',
+    'found' => 'atrasts',
+    'most_relevant' => 'Atbilstošākie',
 ];

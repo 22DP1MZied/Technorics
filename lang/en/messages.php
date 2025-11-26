@@ -199,4 +199,12 @@ return [
     'name_a_z' => 'Name: A to Z',
     'highest_rated' => 'Highest Rated',
     'no_products_found' => 'No products found',
+    
+    // Search
+    'search_results_for' => 'Search Results for',
+    'search_results' => 'Search Results',
+    'no_results_for' => 'No results found for',
+    'try_different_keywords' => 'Try different keywords or browse our categories',
+    'found' => 'found',
+    'most_relevant' => 'Most Relevant',
 ];

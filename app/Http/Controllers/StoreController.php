@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StoreController extends Controller
 {
@@ -106,19 +107,45 @@ class StoreController extends Controller
     {
         $query = $request->input('q');
         
+        if (empty($query)) {
+            return redirect()->route('store.index');
+        }
+
+        // Normalize search query
+        $searchTerm = strtolower(trim($query));
+
         $productsQuery = Product::with('category')
             ->where('is_active', true)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhere('brand', 'like', "%{$query}%");
+            ->where(function($q) use ($searchTerm, $query) {
+                // Search in product fields
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(brand) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$searchTerm}%"])
+                  // Search in category name
+                  ->orWhereHas('category', function($catQuery) use ($searchTerm) {
+                      $catQuery->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
+                               ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$searchTerm}%"]);
+                  });
             });
 
         // Apply filters
         $productsQuery = $this->applyFilters($productsQuery, $request);
 
         // Sorting
-        $productsQuery = $this->applySorting($productsQuery, $request);
+        $sort = $request->get('sort', 'relevance');
+        if ($sort === 'relevance') {
+            // Order by best match (exact matches first, then partial)
+            $productsQuery->orderByRaw("CASE 
+                WHEN LOWER(name) = ? THEN 1
+                WHEN LOWER(name) LIKE ? THEN 2
+                WHEN LOWER(brand) LIKE ? THEN 3
+                WHEN LOWER(description) LIKE ? THEN 4
+                ELSE 5
+                END", [$searchTerm, "{$searchTerm}%", "%{$searchTerm}%", "%{$searchTerm}%"]);
+        } else {
+            $productsQuery = $this->applySorting($productsQuery, $request);
+        }
 
         $products = $productsQuery->paginate(12);
 
@@ -127,10 +154,15 @@ class StoreController extends Controller
 
         // Get all unique brands from search results
         $brands = Product::where('is_active', true)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhere('brand', 'like', "%{$query}%");
+            ->where(function($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(brand) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereHas('category', function($catQuery) use ($searchTerm) {
+                      $catQuery->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
+                               ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$searchTerm}%"]);
+                  });
             })
             ->distinct()
             ->orderBy('brand')
