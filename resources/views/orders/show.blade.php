@@ -96,7 +96,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Order Items</h2>
                 <div class="space-y-4">
-                    @foreach($order->orderItems as $item)
+                    @foreach($order->items as $item)
                     <div class="flex items-center gap-4 pb-4 border-b last:border-b-0">
                         <div class="w-24 h-24 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0">
                             <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-full h-full object-contain p-2">

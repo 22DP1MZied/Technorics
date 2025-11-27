@@ -119,3 +119,19 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
 });
+
+// Track Order Routes
+Route::get('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrder'])->name('track.order');
+Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrderSearch'])->name('track.order.search');
+
+// Track Order Routes
+Route::get('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrder'])->name('track.order');
+Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrderSearch'])->name('track.order.search');
+
+// Track Order Routes (fix route names)
+Route::get('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrder'])->name('pages.track-order');
+Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrderSearch'])->name('pages.track-order.search');
+
+// Track Order Routes
+Route::get('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrder'])->name('pages.track-order');
+Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrderSearch'])->name('pages.track-order.search');

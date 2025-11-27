@@ -19,7 +19,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
-        // FIX: Use discount_price ?? price instead of final_price
+        // Use discount_price ?? price instead of final_price
         $subtotal = $cartItems->sum(function($item) {
             $price = $item->product->discount_price ?? $item->product->price;
             return $price * $item->quantity;
@@ -53,7 +53,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
-        // FIX: Use discount_price ?? price instead of final_price
+        // Use discount_price ?? price instead of final_price
         $subtotal = $cartItems->sum(function($item) {
             $price = $item->product->discount_price ?? $item->product->price;
             return $price * $item->quantity;
@@ -89,7 +89,7 @@ class CheckoutController extends Controller
 
             // Create order items and update stock
             foreach ($cartItems as $item) {
-                // FIX: Use discount_price ?? price instead of final_price
+                // Use discount_price ?? price instead of final_price
                 $price = $item->product->discount_price ?? $item->product->price;
                 
                 OrderItem::create([
@@ -123,6 +123,9 @@ class CheckoutController extends Controller
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
+
+        // Load items and product relationships
+        $order->load(['items.product']);
 
         return view('checkout.confirmation', compact('order'));
     }
