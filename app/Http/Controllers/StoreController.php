@@ -114,4 +114,92 @@ class StoreController extends Controller
 
         return view('store.category', compact('category', 'products', 'brands'));
     }
+
+    public function deals(Request $request)
+    {
+        // Get products with discount_price (on sale)
+        $query = Product::with('category')
+            ->where('is_active', true)
+            ->whereNotNull('discount_price')
+            ->where('discount_price', '<', DB::raw('price'));
+
+        if ($request->has('sort')) {
+            switch($request->sort) {
+                case 'price_low':
+                    $query->orderBy('discount_price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('discount_price', 'desc');
+                    break;
+                case 'discount':
+                    $query->orderByRaw('((price - discount_price) / price * 100) DESC');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+            }
+        } else {
+            // Default: sort by biggest discount percentage
+            $query->orderByRaw('((price - discount_price) / price * 100) DESC');
+        }
+
+        $products = $query->paginate(12);
+        $categories = Category::withCount('products')->get();
+        
+        // Get brands from products on sale
+        $brands = Product::where('is_active', true)
+            ->whereNotNull('discount_price')
+            ->where('discount_price', '<', DB::raw('price'))
+            ->select('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.deals', compact('products', 'categories', 'brands'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q', ''); // Get search term
+        $searchTerm = $query;
+        
+        $productsQuery = Product::with('category')
+            ->where('is_active', true);
+
+        if ($query) {
+            $productsQuery->where(function($q) use ($query) {
+                // Search in product name, description, brand
+                $q->where('name', 'like', '%' . $query . '%')
+                  ->orWhere('description', 'like', '%' . $query . '%')
+                  ->orWhere('brand', 'like', '%' . $query . '%')
+                  // ALSO search in category name
+                  ->orWhereHas('category', function($q2) use ($query) {
+                      $q2->where('name', 'like', '%' . $query . '%');
+                  });
+            });
+        }
+
+        $products = $productsQuery->paginate(12);
+        $categories = Category::withCount('products')->get();
+        
+        // Get brands from search results
+        $brands = Product::where('is_active', true)
+            ->when($query, function($q) use ($query) {
+                $q->where(function($q2) use ($query) {
+                    $q2->where('name', 'like', '%' . $query . '%')
+                       ->orWhere('description', 'like', '%' . $query . '%')
+                       ->orWhere('brand', 'like', '%' . $query . '%')
+                       ->orWhereHas('category', function($q3) use ($query) {
+                           $q3->where('name', 'like', '%' . $query . '%');
+                       });
+                });
+            })
+            ->select('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
+
+        return view('store.search', compact('products', 'categories', 'query', 'searchTerm', 'brands'));
+    }
 }
