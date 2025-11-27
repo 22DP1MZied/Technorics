@@ -50,4 +50,49 @@ class Product extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    /**
+     * Get related products from the same category
+     */
+    public function getRelatedProducts($limit = 4)
+    {
+        return Product::where('category_id', $this->category_id)
+            ->where('id', '!=', $this->id)
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get products frequently bought together
+     * Based on orders that contain this product
+     */
+    public function getFrequentlyBoughtTogether($limit = 4)
+    {
+        // Get order IDs that contain this product
+        $orderIds = OrderItem::where('product_id', $this->id)
+            ->pluck('order_id')
+            ->unique();
+
+        if ($orderIds->isEmpty()) {
+            // Fallback to related products if no order history
+            return $this->getRelatedProducts($limit);
+        }
+
+        // Get other products from those orders
+        return Product::whereIn('id', function($query) use ($orderIds) {
+                $query->select('product_id')
+                    ->from('order_items')
+                    ->whereIn('order_id', $orderIds)
+                    ->where('product_id', '!=', $this->id);
+            })
+            ->where('is_active', true)
+            ->withCount(['orderItems' => function($query) use ($orderIds) {
+                $query->whereIn('order_id', $orderIds);
+            }])
+            ->orderBy('order_items_count', 'desc')
+            ->limit($limit)
+            ->get();
+    }
 }

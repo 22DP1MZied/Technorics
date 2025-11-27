@@ -26,7 +26,7 @@
         </div>
         @endif
 
-        <form action="{{ route('checkout.process') }}" method="POST">
+        <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
             @csrf
             <div class="grid lg:grid-cols-3 gap-8">
                 <!-- Left Column - Shipping & Payment -->
@@ -65,7 +65,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.country') }} *</label>
-                                <select name="shipping_country" required 
+                                <select name="shipping_country" id="shipping_country" required 
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
                                     <option value="Latvia" {{ old('shipping_country') == 'Latvia' ? 'selected' : '' }}>Latvia</option>
                                     <option value="Estonia" {{ old('shipping_country') == 'Estonia' ? 'selected' : '' }}>Estonia</option>
@@ -74,27 +74,38 @@
                                 </select>
                             </div>
 
-                            <div class="md:col-span-2">
+                            <div class="md:col-span-2 relative">
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.address') }} *</label>
-                                <input type="text" name="shipping_address" value="{{ old('shipping_address') }}" required placeholder="{{ __('messages.street_address') }}"
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                <div class="relative">
+                                    <input type="text" id="shipping_address" name="shipping_address" value="{{ old('shipping_address') }}" required 
+                                        placeholder="{{ __('messages.street_address') }}"
+                                        autocomplete="off"
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                    <div id="address-loading" class="hidden absolute right-3 top-3">
+                                        <svg class="animate-spin h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div id="address-suggestions" class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hidden max-h-60 overflow-y-auto"></div>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.city') }} *</label>
-                                <input type="text" name="shipping_city" value="{{ old('shipping_city') }}" required 
+                                <input type="text" id="shipping_city" name="shipping_city" value="{{ old('shipping_city') }}" required 
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.state_province') }} *</label>
-                                <input type="text" name="shipping_state" value="{{ old('shipping_state') }}" required 
+                                <input type="text" id="shipping_state" name="shipping_state" value="{{ old('shipping_state') }}" required 
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
                             </div>
 
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.zip_postal_code') }} *</label>
-                                <input type="text" name="shipping_zip" value="{{ old('shipping_zip') }}" required 
+                                <input type="text" id="shipping_zip" name="shipping_zip" value="{{ old('shipping_zip') }}" required 
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
                             </div>
                         </div>
@@ -112,29 +123,66 @@
                         </div>
 
                         <div class="space-y-3">
-                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition">
+                            <!-- Credit/Debit Card -->
+                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition payment-option" data-payment="card">
                                 <input type="radio" name="payment_method" value="card" checked class="w-5 h-5 text-emerald-600">
                                 <div class="flex-1">
                                     <div class="font-semibold text-gray-900 dark:text-white">{{ __('messages.credit_debit_card') }}</div>
                                     <div class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.visa_mastercard_amex') }}</div>
                                 </div>
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                </svg>
+                                <div class="flex gap-2">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-6">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-6">
+                                </div>
                             </label>
 
-                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition">
+                            <!-- Card Details -->
+                            <div id="card-details" class="pl-12 pr-4 pb-4 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Card Number *</label>
+                                    <input type="text" id="card_number" maxlength="19" placeholder="1234 5678 9012 3456"
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Expiry Date *</label>
+                                        <input type="text" id="card_expiry" maxlength="5" placeholder="MM/YY"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CVV *</label>
+                                        <input type="text" id="card_cvv" maxlength="4" placeholder="123"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cardholder Name *</label>
+                                    <input type="text" id="card_holder" placeholder="JOHN DOE"
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none uppercase">
+                                </div>
+
+                                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                    <span>Your payment information is encrypted and secure</span>
+                                </div>
+                            </div>
+
+                            <!-- PayPal -->
+                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition payment-option" data-payment="paypal">
                                 <input type="radio" name="payment_method" value="paypal" class="w-5 h-5 text-emerald-600">
                                 <div class="flex-1">
                                     <div class="font-semibold text-gray-900 dark:text-white">{{ __('messages.paypal') }}</div>
                                     <div class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.fast_secure') }}</div>
                                 </div>
-                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.805.805 0 01-.794.68H7.72a.483.483 0 01-.477-.558L8.926 7.68a.946.946 0 01.934-.808h4.92c.66 0 1.24.041 1.744.127-.58 3.766-3.245 5.107-6.504 5.107h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.805.805 0 01-.794.68H2.893a.483.483 0 01-.477-.558L3.99 3.685a.946.946 0 01.934-.808h4.92c3.968 0 6.685 1.687 7.224 5.601z"/>
-                                </svg>
+                                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" class="h-8">
                             </label>
 
-                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition">
+                            <!-- Bank Transfer -->
+                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition payment-option" data-payment="bank_transfer">
                                 <input type="radio" name="payment_method" value="bank_transfer" class="w-5 h-5 text-emerald-600">
                                 <div class="flex-1">
                                     <div class="font-semibold text-gray-900 dark:text-white">{{ __('messages.bank_transfer') }}</div>
@@ -145,7 +193,8 @@
                                 </svg>
                             </label>
 
-                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition">
+                            <!-- Cash on Delivery -->
+                            <label class="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-500 transition payment-option" data-payment="cash_on_delivery">
                                 <input type="radio" name="payment_method" value="cash_on_delivery" class="w-5 h-5 text-emerald-600">
                                 <div class="flex-1">
                                     <div class="font-semibold text-gray-900 dark:text-white">{{ __('messages.cash_on_delivery') }}</div>
@@ -254,4 +303,203 @@
         </form>
     </div>
 </div>
+
+<script>
+// Payment method toggle
+document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        const paymentType = this.dataset.payment;
+        const cardDetails = document.getElementById('card-details');
+        
+        if (paymentType === 'card') {
+            cardDetails.classList.remove('hidden');
+        } else {
+            cardDetails.classList.add('hidden');
+        }
+    });
+});
+
+// Card number formatting
+document.getElementById('card_number')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formattedValue;
+});
+
+// Expiry date formatting
+document.getElementById('card_expiry')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    e.target.value = value;
+});
+
+// CVV validation (numbers only)
+document.getElementById('card_cvv')?.addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+// Real address autocomplete using OpenStreetMap Nominatim API
+const addressInput = document.getElementById('shipping_address');
+const suggestionsDiv = document.getElementById('address-suggestions');
+const loadingDiv = document.getElementById('address-loading');
+const cityInput = document.getElementById('shipping_city');
+const stateInput = document.getElementById('shipping_state');
+const zipInput = document.getElementById('shipping_zip');
+const countrySelect = document.getElementById('shipping_country');
+
+let searchTimeout;
+
+addressInput.addEventListener('input', function(e) {
+    const query = e.target.value;
+    const country = countrySelect.value;
+    
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 3) {
+        suggestionsDiv.classList.add('hidden');
+        loadingDiv.classList.add('hidden');
+        return;
+    }
+    
+    // Show loading
+    loadingDiv.classList.remove('hidden');
+    
+    // Debounce API calls
+    searchTimeout = setTimeout(() => {
+        searchAddress(query, country);
+    }, 500);
+});
+
+async function searchAddress(query, country) {
+    try {
+        // Map country names to ISO codes
+        const countryMap = {
+            'Latvia': 'LV',
+            'Estonia': 'EE',
+            'Lithuania': 'LT'
+        };
+        
+        const countryCode = countryMap[country] || 'LV';
+        
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?` +
+            `format=json&` +
+            `q=${encodeURIComponent(query)}&` +
+            `countrycodes=${countryCode}&` +
+            `addressdetails=1&` +
+            `limit=10`,
+            {
+                headers: {
+                    'User-Agent': 'Technorics E-commerce'
+                }
+            }
+        );
+        
+        const data = await response.json();
+        loadingDiv.classList.add('hidden');
+        
+        if (data.length === 0) {
+            suggestionsDiv.innerHTML = '<div class="p-3 text-sm text-gray-600 dark:text-gray-400">No addresses found. Try a different search.</div>';
+            suggestionsDiv.classList.remove('hidden');
+            return;
+        }
+        
+        suggestionsDiv.innerHTML = data.map(place => {
+            const address = place.address;
+            const street = address.road || address.pedestrian || address.footway || '';
+            const houseNumber = address.house_number || '';
+            const city = address.city || address.town || address.village || address.municipality || '';
+            const state = address.state || address.county || '';
+            const postcode = address.postcode || '';
+            
+            const fullStreet = `${street} ${houseNumber}`.trim();
+            const displayName = place.display_name;
+            
+            return `
+                <div class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b dark:border-gray-700 last:border-b-0" 
+                     onclick='selectAddress(${JSON.stringify({
+                         street: fullStreet,
+                         city: city,
+                         state: state,
+                         postcode: postcode
+                     })})'>
+                    <div class="font-semibold text-gray-900 dark:text-white">${displayName}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        ${street ? '🏠 ' + fullStreet : ''} ${city ? '• ' + city : ''} ${postcode ? '• ' + postcode : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        suggestionsDiv.classList.remove('hidden');
+    } catch (error) {
+        console.error('Address search error:', error);
+        loadingDiv.classList.add('hidden');
+        suggestionsDiv.innerHTML = '<div class="p-3 text-sm text-red-600">Error loading addresses. Please try again.</div>';
+        suggestionsDiv.classList.remove('hidden');
+    }
+}
+
+function selectAddress(addressData) {
+    if (addressData.street) {
+        addressInput.value = addressData.street;
+    }
+    if (addressData.city) {
+        cityInput.value = addressData.city;
+    }
+    if (addressData.state) {
+        stateInput.value = addressData.state;
+    }
+    if (addressData.postcode) {
+        zipInput.value = addressData.postcode;
+    }
+    suggestionsDiv.classList.add('hidden');
+}
+
+// Hide suggestions when clicking outside
+document.addEventListener('click', function(e) {
+    if (!addressInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+        suggestionsDiv.classList.add('hidden');
+    }
+});
+
+// Form validation for card payment
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+    
+    if (paymentMethod === 'card') {
+        const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
+        const cardExpiry = document.getElementById('card_expiry').value;
+        const cardCVV = document.getElementById('card_cvv').value;
+        const cardHolder = document.getElementById('card_holder').value;
+        
+        if (!cardNumber || cardNumber.length < 13) {
+            e.preventDefault();
+            alert('Please enter a valid card number');
+            return;
+        }
+        
+        if (!cardExpiry || cardExpiry.length !== 5) {
+            e.preventDefault();
+            alert('Please enter a valid expiry date (MM/YY)');
+            return;
+        }
+        
+        if (!cardCVV || cardCVV.length < 3) {
+            e.preventDefault();
+            alert('Please enter a valid CVV');
+            return;
+        }
+        
+        if (!cardHolder || cardHolder.length < 3) {
+            e.preventDefault();
+            alert('Please enter the cardholder name');
+            return;
+        }
+    }
+});
+</script>
 @endsection

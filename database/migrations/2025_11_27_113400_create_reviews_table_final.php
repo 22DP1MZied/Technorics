@@ -12,12 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->integer('rating')->unsigned()->default(5); // 1-5
+            $table->integer('rating')->default(5);
             $table->text('comment')->nullable();
-            $table->boolean('is_verified_purchase')->default(false);
             $table->timestamps();
             
-            $table->unique(['user_id', 'product_id']); // One review per user per product
+            // Add index for performance but NOT unique
+            $table->index(['user_id', 'product_id']);
         });
     }
 

@@ -135,3 +135,10 @@ Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 
 // Track Order Routes
 Route::get('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrder'])->name('pages.track-order');
 Route::post('/pages/track-order', [App\Http\Controllers\OrderController::class, 'trackOrderSearch'])->name('pages.track-order.search');
+
+// Review Routes
+Route::middleware('auth')->group(function () {
+    Route::post('/products/{product}/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+});

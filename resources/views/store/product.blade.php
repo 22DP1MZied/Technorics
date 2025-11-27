@@ -30,12 +30,12 @@
                 <div class="flex items-center gap-2 mb-4">
                     <div class="flex items-center gap-1">
                         @for($i = 0; $i < 5; $i++)
-                            <svg class="w-5 h-5 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 {{ $i < floor($averageRating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                         @endfor
                     </div>
-                    <span class="text-gray-600 dark:text-gray-400">{{ $product->rating }}/5 ({{ $product->reviews_count }} {{ __('messages.reviews') }})</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ number_format($averageRating, 1) }}/5 ({{ $reviews->count() }} {{ __('messages.reviews') }})</span>
                 </div>
 
                 <!-- Price -->
@@ -121,153 +121,36 @@
             </div>
         </div>
 
-        <!-- Reviews Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-8">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ __('messages.customer_reviews') }}</h2>
-
-            <!-- Review Summary -->
-            <div class="mb-8 pb-8 border-b dark:border-gray-700">
-                <div class="flex items-center gap-8">
-                    <div class="text-center">
-                        <div class="text-5xl font-bold text-gray-900 dark:text-white mb-2">{{ $product->rating }}</div>
-                        <div class="flex items-center gap-1 mb-2">
-                            @for($i = 0; $i < 5; $i++)
-                                <svg class="w-5 h-5 {{ $i < floor($product->rating) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                            @endfor
-                        </div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.based_on') }} {{ $product->reviews_count }} {{ __('messages.reviews') }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Write Review Form -->
-            @auth
-            @php
-                $userReview = $product->reviews()->where('user_id', auth()->id())->first();
-            @endphp
-            
-            <div class="mb-8 pb-8 border-b dark:border-gray-700">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    {{ $userReview ? __('messages.update_review') : __('messages.write_review') }}
-                </h3>
-                
-                <form action="{{ route('reviews.store', $product) }}" method="POST">
-                    @csrf
-                    
-                    <!-- Star Rating -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">{{ __('messages.rating') }}</label>
-                        <div class="flex gap-2" id="star-rating">
-                            @for($i = 1; $i <= 5; $i++)
-                            <button type="button" onclick="setRating({{ $i }})" class="star-btn">
-                                <svg class="w-8 h-8 {{ $userReview && $i <= $userReview->rating ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                            </button>
-                            @endfor
-                        </div>
-                        <input type="hidden" name="rating" id="rating-input" value="{{ $userReview ? $userReview->rating : 5 }}" required>
-                    </div>
-
-                    <!-- Review Comment -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">{{ __('messages.your_review') }}</label>
-                        <textarea 
-                            name="comment" 
-                            rows="4" 
-                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-emerald-600 focus:outline-none"
-                            placeholder="{{ __('messages.share_experience') }}">{{ $userReview ? $userReview->comment : '' }}</textarea>
-                    </div>
-
-                    <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                        {{ $userReview ? __('messages.update_review_btn') : __('messages.submit_review') }}
-                    </button>
-                </form>
-            </div>
-            @else
-            <div class="mb-8 pb-8 border-b dark:border-gray-700">
-                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 text-center">
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('messages.login_to_review') }}</p>
-                    <a href="{{ route('login') }}" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                        {{ __('messages.login') }}
-                    </a>
-                </div>
-            </div>
-            @endauth
-
-            <!-- Reviews List -->
-            <div class="space-y-6">
-                @forelse($product->reviews()->with('user')->latest()->get() as $review)
-                <div class="border-b dark:border-gray-700 pb-6 last:border-0">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span class="text-emerald-600 dark:text-emerald-400 font-bold text-lg">
-                                {{ strtoupper(substr($review->user->name, 0, 1)) }}
-                            </span>
-                        </div>
-                        
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ $review->user->name }}</h4>
-                                    <div class="flex items-center gap-2">
-                                        <div class="flex items-center gap-1">
-                                            @for($i = 0; $i < 5; $i++)
-                                                <svg class="w-4 h-4 {{ $i < $review->rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                                </svg>
-                                            @endfor
-                                        </div>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ $review->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
-                                
-                                @auth
-                                @if($review->user_id === auth()->id())
-                                <form action="{{ route('reviews.destroy', $review) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-semibold" onclick="return confirm('{{ __('messages.delete') }}?')">
-                                        {{ __('messages.delete') }}
-                                    </button>
-                                </form>
-                                @endif
-                                @endauth
-                            </div>
-                            
-                            @if($review->comment)
-                            <p class="text-gray-600 dark:text-gray-400">{{ $review->comment }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="text-center py-8">
-                    <p class="text-gray-600 dark:text-gray-400">{{ __('messages.no_reviews_yet') }}</p>
-                </div>
-                @endforelse
+        <!-- Frequently Bought Together -->
+        @if($frequentlyBoughtTogether->count() > 0)
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛒 Frequently Bought Together</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach($frequentlyBoughtTogether as $relatedProduct)
+                    @include('components.product-card', ['product' => $relatedProduct])
+                @endforeach
             </div>
         </div>
+        @endif
+
+        <!-- Related Products -->
+        @if($relatedProducts->count() > 0)
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">✨ Similar Products You May Like</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach($relatedProducts as $relatedProduct)
+                    @include('components.product-card', ['product' => $relatedProduct])
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Upgraded Reviews Component -->
+        @include('components.product-reviews', ['product' => $product, 'reviews' => $reviews, 'averageRating' => $averageRating])
     </div>
 </div>
 
 <script>
-function setRating(rating) {
-    document.getElementById('rating-input').value = rating;
-    const stars = document.querySelectorAll('#star-rating svg');
-    stars.forEach((star, index) => {
-        if (index < rating) {
-            star.classList.add('text-yellow-400', 'fill-current');
-            star.classList.remove('text-gray-300', 'dark:text-gray-600');
-        } else {
-            star.classList.remove('text-yellow-400', 'fill-current');
-            star.classList.add('text-gray-300', 'dark:text-gray-600');
-        }
-    });
-}
-
 function toggleWishlist(productId, button) {
     const isInWishlist = button.getAttribute('data-in-wishlist') === 'true';
     const heartIcon = button.querySelector('svg');

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\CartItem;
+use App\Mail\OrderConfirmationEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -107,9 +109,12 @@ class CheckoutController extends Controller
             // Clear cart
             CartItem::where('user_id', Auth::id())->delete();
 
+            // Send order confirmation email
+            Mail::to($order->shipping_email)->send(new OrderConfirmationEmail($order));
+
             DB::commit();
 
-            return redirect()->route('checkout.confirmation', $order)->with('success', 'Order placed successfully!');
+            return redirect()->route('checkout.confirmation', $order)->with('success', 'Order placed successfully! Check your email for confirmation.');
 
         } catch (\Exception $e) {
             DB::rollback();
