@@ -3,10 +3,8 @@
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
             <div class="flex items-center">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-xl">T</span>
-                    </div>
+                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <img src="{{ asset('images/logo.png') }}" alt="Technorics Logo" class="w-10 h-10">
                     <span class="text-2xl font-bold text-gray-900 dark:text-white">Technorics</span>
                 </a>
             </div>
@@ -93,7 +91,7 @@
                         </svg>
                     </button>
                     <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                        <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg">{{ __('messages.profile') }}</a>
+                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg">{{ __('messages.profile') }}</a>
                         <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('messages.my_orders') }}</a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

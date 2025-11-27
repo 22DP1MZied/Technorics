@@ -19,6 +19,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,7 +38,19 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Amber,
             ])
-            ->brandName('Technorics Admin')
+            ->brandName('Technorics')
+            ->brandLogo(fn () => new HtmlString('
+                <div class="flex items-center gap-3">
+                    <img src="' . asset('images/logo.png') . '" alt="Technorics" class="h-10 w-auto object-contain">
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">Technorics</span>
+                </div>
+            '))
+            ->darkModeBrandLogo(fn () => new HtmlString('
+                <div class="flex items-center gap-3">
+                    <img src="' . asset('images/logo.png') . '" alt="Technorics" class="h-10 w-auto object-contain">
+                    <span class="text-xl font-bold text-white">Technorics</span>
+                </div>
+            '))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -77,7 +90,7 @@ class AdminPanelProvider extends PanelProvider
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                     </svg>
-                                    Back to Home
+                    Back to Home
                                 </a>`;
                                 form.parentElement.appendChild(link);
                                 observer.disconnect();

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Technorics - Electronics Store')</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -84,9 +85,7 @@
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-xl">TR</span>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Technorics Logo" class="w-14 h-14 object-contain">
                     <span class="text-2xl font-bold text-gray-900 dark:text-white">Technorics</span>
                 </a>
 
@@ -102,6 +101,18 @@
 
                 <!-- Right Icons -->
                 <div class="flex items-center gap-4">
+                    @auth
+                        @if(auth()->user()->is_admin)
+                            <a href="/admin" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-700 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-800 transition font-semibold text-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="hidden lg:block">Admin</span>
+                            </a>
+                        @endif
+                    @endauth
+
                     <!-- Compare Button -->
                     <a href="{{ route('compare.index') }}" class="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" id="compare-btn">
                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +186,7 @@
                     <a href="{{ route('home') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">{{ __('messages.home') }}</a>
                     <a href="{{ route('store.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition">{{ __('messages.all_products') }}</a>
                     
-                    <!-- PC Components Dropdown - FIXED -->
+                    <!-- PC Components Dropdown -->
                     <div class="relative group">
                         <button class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition flex items-center gap-1">
                             {{ __('messages.pc_components') }}
@@ -184,7 +195,7 @@
                             </svg>
                         </button>
                         
-                        <!-- Dropdown Menu - No gap, appears immediately on hover -->
+                        <!-- Dropdown Menu -->
                         <div class="absolute left-0 top-full w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <a href="{{ route('store.category', 'cpus') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700 hover:text-emerald-600">
                                 <span class="font-semibold">CPUs (Processors)</span>
@@ -235,10 +246,8 @@
             <div class="grid md:grid-cols-4 gap-8">
                 <!-- Company Info -->
                 <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold">TR</span>
-                        </div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="{{ asset('images/logo.png') }}" alt="Technorics Logo" class="w-12 h-12 object-contain">
                         <span class="text-xl font-bold">Technorics</span>
                     </div>
                     <p class="text-gray-400 text-sm">{{ __('messages.company_tagline') }}</p>

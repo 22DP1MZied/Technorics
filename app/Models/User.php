@@ -37,4 +37,24 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->is_admin === true;
     }
+
+    public function orders()
+    {
+        return $this->hasMany(\App\Models\Order::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class);
+    }
+
+    public function wishlist()
+    {
+        return $this->hasMany(\App\Models\Wishlist::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(\App\Models\CartItem::class);
+    }
 }
