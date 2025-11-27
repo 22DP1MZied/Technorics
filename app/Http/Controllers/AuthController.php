@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -52,6 +53,21 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            
+            // Debug logging
+            Log::info('User logged in', [
+                'email' => Auth::user()->email,
+                'is_admin' => Auth::user()->is_admin,
+                'is_admin_type' => gettype(Auth::user()->is_admin)
+            ]);
+            
+            // Redirect admin users to admin panel
+            if (Auth::user()->is_admin == true || Auth::user()->is_admin == 1) {
+                Log::info('Redirecting to admin panel');
+                return redirect('/admin')->with('success', 'Welcome to Admin Panel!');
+            }
+            
+            Log::info('Redirecting to home');
             return redirect()->intended(route('home'))->with('success', 'Welcome back!');
         }
 

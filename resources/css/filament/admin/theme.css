@@ -1,0 +1,121 @@
+/* Technorics Emerald Green Theme for Filament */
+
+/* Stats Cards - Emerald Gradient */
+.fi-wi-stats-overview-stat-card {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border: none !important;
+}
+
+.fi-wi-stats-overview-stat-value,
+.fi-wi-stats-overview-stat-label,
+.fi-wi-stats-overview-stat-description,
+.fi-wi-stats-overview-stat-icon {
+    color: white !important;
+}
+
+/* Active Sidebar Item */
+.fi-sidebar-item-button[aria-current="page"],
+.fi-sidebar-group-item-button[aria-current="page"] {
+    background-color: #059669 !important;
+}
+
+.fi-sidebar-item-button[aria-current="page"] *,
+.fi-sidebar-group-item-button[aria-current="page"] * {
+    color: white !important;
+}
+
+/* Sidebar Hover */
+.fi-sidebar-item-button:hover:not([aria-current="page"]),
+.fi-sidebar-group-item-button:hover:not([aria-current="page"]) {
+    background-color: rgba(5, 150, 105, 0.1) !important;
+}
+
+/* Primary Buttons */
+button[type="submit"]:not([class*="gray"]),
+.fi-btn-color-primary {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+    color: white !important;
+}
+
+button[type="submit"]:not([class*="gray"]):hover,
+.fi-btn-color-primary:hover {
+    background-color: #047857 !important;
+    border-color: #047857 !important;
+}
+
+/* Links */
+a[class*="fi-link"] {
+    color: #059669 !important;
+}
+
+a[class*="fi-link"]:hover {
+    color: #047857 !important;
+}
+
+/* Dashboard Welcome Banner */
+.dashboard-welcome {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-welcome h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.dashboard-welcome p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+/* Checkboxes and Radio */
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+}
+
+/* Toggle Switches */
+button[role="switch"][aria-checked="true"] {
+    background-color: #059669 !important;
+}
+
+/* Form Focus States */
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #059669 !important;
+    --tw-ring-color: rgba(5, 150, 105, 0.5) !important;
+}
+
+/* Table Row Hover */
+.fi-ta-row:hover {
+    background-color: rgba(5, 150, 105, 0.05) !important;
+}
+
+/* Badge - Pending Status */
+.fi-badge[class*="warning"] {
+    background-color: #f59e0b !important;
+    color: white !important;
+}
+
+/* Loading Spinner */
+svg[class*="animate-spin"] {
+    color: #059669 !important;
+}
+
+/* Action Buttons */
+.fi-ac-btn-action {
+    color: #059669 !important;
+}
+
+.fi-ac-btn-action:hover {
+    background-color: rgba(5, 150, 105, 0.1) !important;
+}

@@ -1,0 +1,79 @@
+/* Technorics Admin Panel Custom Styles */
+
+/* Brand Colors */
+:root {
+    --technorics-primary: #059669;
+    --technorics-primary-dark: #047857;
+    --technorics-secondary: #10b981;
+}
+
+/* Logo Styling */
+.fi-logo {
+    font-weight: 700;
+    color: var(--technorics-primary);
+}
+
+/* Sidebar Styling */
+.fi-sidebar {
+    background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+}
+
+.dark .fi-sidebar {
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+}
+
+/* Active Sidebar Item */
+.fi-sidebar-item-active {
+    background: var(--technorics-primary) !important;
+    color: white !important;
+}
+
+/* Cards */
+.fi-card {
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Stats Cards */
+.fi-stats-card {
+    background: linear-gradient(135deg, var(--technorics-primary) 0%, var(--technorics-primary-dark) 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+/* Buttons */
+.fi-btn-primary {
+    background: var(--technorics-primary) !important;
+    border-color: var(--technorics-primary) !important;
+}
+
+.fi-btn-primary:hover {
+    background: var(--technorics-primary-dark) !important;
+    border-color: var(--technorics-primary-dark) !important;
+}
+
+/* Tables */
+.fi-table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Dashboard Welcome Message */
+.dashboard-welcome {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.dashboard-welcome h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-welcome p {
+    opacity: 0.9;
+}

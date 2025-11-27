@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StoreController extends Controller
 {
@@ -45,8 +46,16 @@ class StoreController extends Controller
 
         $products = $query->paginate(12);
         $categories = Category::withCount('products')->get();
+        
+        // Get all unique brands from products
+        $brands = Product::where('is_active', true)
+            ->select('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter(); // Remove null values
 
-        return view('store.index', compact('products', 'categories'));
+        return view('store.index', compact('products', 'categories', 'brands'));
     }
 
     public function show($slug)
@@ -93,7 +102,16 @@ class StoreController extends Controller
         }
 
         $products = $query->paginate(12);
+        
+        // Get brands for this category
+        $brands = Product::where('category_id', $category->id)
+            ->where('is_active', true)
+            ->select('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->filter();
 
-        return view('store.category', compact('category', 'products'));
+        return view('store.category', compact('category', 'products', 'brands'));
     }
 }

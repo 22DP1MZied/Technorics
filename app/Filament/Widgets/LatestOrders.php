@@ -6,7 +6,6 @@ use App\Models\Order;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class LatestOrders extends BaseWidget
 {
@@ -14,35 +13,36 @@ class LatestOrders extends BaseWidget
     
     protected static ?int $sort = 2;
 
-    protected function getTableQuery(): Builder
+    public function table(Table $table): Table
     {
-        return Order::query()->latest()->limit(5);
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\TextColumn::make('order_number')
-                ->searchable(),
-            
-            Tables\Columns\TextColumn::make('user.name')
-                ->searchable(),
-            
-            Tables\Columns\TextColumn::make('total')
-                ->money('EUR'),
-            
-            Tables\Columns\BadgeColumn::make('status')
-                ->colors([
-                    'secondary' => 'pending',
-                    'warning' => 'processing',
-                    'primary' => 'shipped',
-                    'success' => 'delivered',
-                    'danger' => 'cancelled',
-                ]),
-            
-            Tables\Columns\TextColumn::make('created_at')
-                ->dateTime()
-                ->sortable(),
-        ];
+        return $table
+            ->query(
+                Order::query()->latest()->limit(5)
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('order_number')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Order #'),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->searchable()
+                    ->label('Customer'),
+                Tables\Columns\TextColumn::make('total')
+                    ->money('EUR')
+                    ->sortable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'warning' => 'pending',
+                        'info' => 'processing',
+                        'primary' => 'shipped',
+                        'success' => 'delivered',
+                        'danger' => 'cancelled',
+                    ]),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Date'),
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }
