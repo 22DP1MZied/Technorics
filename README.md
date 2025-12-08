@@ -1,210 +1,316 @@
-# 🎮 GamerZone Electronics Store
+# 🎮 Technorics - Premium Electronics E-Commerce Store
 
-A modern, feature-rich gaming electronics e-commerce store built with Laravel and Tailwind CSS.
+![Technorics Logo](public/images/logo.png)
 
-## 📦 What's Included
+A full-featured e-commerce platform built with Laravel for selling electronics, gaming gear, and PC components. Features a modern design with emerald green branding, multi-language support, and comprehensive admin panel.
 
-This package contains all the files needed to build a complete gaming electronics store:
+## ✨ Features
 
-### 📂 Directory Structure
+### 🛍️ Customer Features
+- **Product Browsing**
+  - Browse products by categories (Laptops, PC Components, Monitors, Keyboards, Mice, Headsets)
+  - Advanced search with category filtering
+  - Product comparison tool
+  - "Frequently Bought Together" recommendations
+  - Related products suggestions
+  - Hot deals section with discount percentages
 
-```
-gamer-store-project/
-├── database/                      # Database migrations
-├── models/                        # Eloquent models
-├── controllers/                   # Application controllers
-├── views/                         # Blade templates
-├── public/                        # Public assets (placeholder)
-├── web.php                        # Routes definition
-├── GIT_CLONE_SETUP.md             # ⭐ START HERE (Git clone method)
-├── CHEAT_SHEET.md                 # 📄 One-page quick reference
-├── GIT_VS_FRESH_INSTALL.md        # Method comparison
-├── QUICK_START.md                 # Alternative: Fresh install
-├── WHERE_TO_RUN_COMMANDS.md       # Terminal guide
-├── MACOS_SETUP_GUIDE.md           # macOS complete guide
-├── SETUP_GUIDE.md                 # General setup guide
-└── FILE_PLACEMENT_GUIDE.md        # File placement reference
-```
+- **Shopping Experience**
+  - Shopping cart with real-time updates
+  - Wishlist functionality
+  - Guest browsing, authenticated checkout
+  - Stripe payment integration (test mode)
+  - Address autocomplete (Google Places API)
+  - Order tracking system
 
-### 🗂️ Files Overview
+- **User Accounts**
+  - User registration and authentication
+  - Profile management
+  - Order history with detailed views
+  - Review system (unlimited reviews per product)
+  - Edit/delete own reviews
 
-**Database Migrations:**
-- `create_categories_table.php` - Product categories
-- `create_products_table.php` - Product listings
-- `create_cart_items_table.php` - Shopping cart
-- `create_orders_table.php` - Order management
+- **Internationalization**
+  - Multi-language support: English, Latvian, Russian
+  - Dynamic language switcher
+  - Fully translated interface
 
-**Models:**
-- `Category.php` - Product categories
-- `Product.php` - Product management
-- `CartItem.php` - Shopping cart items
-- `Order.php` - Orders and order items
+- **Modern UI/UX**
+  - Dark mode support
+  - Responsive design (mobile-friendly)
+  - Emerald green brand colors
+  - Smooth transitions and animations
+  - AI Assistant widget
 
-**Controllers:**
-- `StoreController.php` - Main store pages
-- `CartController.php` - Cart functionality
-- `CheckoutController.php` - Checkout process
+### 🔐 Admin Features
+- **Filament Admin Panel**
+  - Custom emerald green theme
+  - Dashboard with key metrics:
+    - Total Revenue (€11,582.91)
+    - Total Orders (6)
+    - Active Products
+    - Total Users
+  - Latest orders widget
+  - Admin-only access control
 
-**Views:**
-- `layout.blade.php` - Main layout template
-- `index.blade.php` - Homepage
-- `product.blade.php` - Product details
-- `cart.blade.php` - Shopping cart
+- **Management Tools**
+  - Product management (CRUD)
+  - Category management
+  - Order management with status updates
+  - User management
+  - Review moderation
 
-**Additional:**
-- `StoreSeeder.php` - Sample data seeder with 12 products
-- `web.php` - Application routes configuration
+### 📧 Email Notifications
+- Welcome email on registration
+- Order confirmation
+- Order status updates
+- Shipping notifications with tracking numbers
+- Professional HTML email templates
+- Queue-based background processing
 
-**📚 Documentation & Guides:**
-- `GIT_CLONE_SETUP.md` - ⭐ **Clone from GitHub** (Easiest!)
-- `CHEAT_SHEET.md` - 📄 One-page quick reference
-- `GIT_VS_FRESH_INSTALL.md` - Method comparison
-- `QUICK_START.md` - Fresh install method
-- `WHERE_TO_RUN_COMMANDS.md` - Terminal vs VS Code
-- `MACOS_SETUP_GUIDE.md` - Complete macOS guide
-- `SETUP_GUIDE.md` - General setup guide
-- `FILE_PLACEMENT_GUIDE.md` - File placement reference
+### 🔧 Technical Features
+- Laravel 12.39.0
+- PHP 8.4.14
+- MySQL database
+- Tailwind CSS for styling
+- Alpine.js for interactivity
+- Filament v3 for admin panel
+- Gmail SMTP for emails
+- Vite for asset compilation
 
-## 🚀 Quick Start
+## 📦 Installation
 
-### 📚 **START HERE - Choose Your Setup Method:**
-
-**🔥 Cloning from GitHub? (Recommended)**
-1. ⭐ **[GIT_CLONE_SETUP.md](GIT_CLONE_SETUP.md)** - **START HERE!** Easiest & fastest method!
-
-**🛠️ Creating from Scratch?**
-1. **[QUICK_START.md](QUICK_START.md)** - 5-minute simple setup
-2. **[WHERE_TO_RUN_COMMANDS.md](WHERE_TO_RUN_COMMANDS.md)** - Terminal vs VS Code explained
-
-**🍎 macOS Specific Guides:**
-- **[MACOS_SETUP_GUIDE.md](MACOS_SETUP_GUIDE.md)** - Complete macOS guide with troubleshooting
-
-**💻 General Guides:**
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - General setup guide
-- **[FILE_PLACEMENT_GUIDE.md](FILE_PLACEMENT_GUIDE.md)** - Where to place files
-
-### ⚡ Super Quick (Git Clone - EASIEST):
-1. Open **Terminal** → `brew install php@8.2 composer node mysql`
-2. Clone repo → `git clone YOUR_REPO_URL`
-3. Open VS Code → `code .`
-4. Install deps → `composer install && npm install && npm run build`
-5. Setup → `cp .env.example .env && php artisan key:generate`
-6. Database → Create `gamer_store` database, update `.env`
-7. Migrate → `php artisan migrate --seed`
-8. Run → `php artisan serve`
-9. Visit **http://localhost:8000** 🎮
-
-## ✨ Key Features
-
-- 🎨 Modern gaming-themed UI with neon effects
-- 🛍️ Complete product catalog system
-- 🛒 Full shopping cart functionality
-- 💳 Checkout and order management
-- 🔍 Product search
-- ⭐ Product ratings display
-- 📱 Fully responsive design
-- 🎮 Gaming aesthetic with purple/dark theme
-- 🔐 User authentication ready
-
-## 🎯 What You Get
-
-### Frontend Features:
-- Beautiful landing page with hero section
-- Product grid with hover effects
-- Category navigation
-- Product detail pages
-- Shopping cart interface
-- Glass morphism design
-- Neon text effects
-- Smooth animations
-
-### Backend Features:
-- Product management
-- Category system
-- Shopping cart logic
-- Order processing
-- Stock management
-- Price calculations
-- Database relationships
-- Sample data seeding
-
-## 📋 Requirements
-
-- PHP 8.1 or higher
+### Prerequisites
+- PHP 8.4+
 - Composer
-- Node.js & NPM
-- MySQL 5.7+
-- Laravel 10.x
+- Node.js & npm
+- MySQL
+- Git
 
-## 🎨 Design Highlights
+### Setup Instructions
 
-- **Color Palette:** Purple gradients, dark backgrounds, neon accents
-- **Fonts:** Rajdhani (headings), Inter (body)
-- **Style:** Cyber-punk gaming aesthetic
-- **Effects:** Glass morphism, hover animations, smooth transitions
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/technorics.git
+cd technorics
+```
 
-## 📖 Documentation
+2. **Install PHP dependencies**
+```bash
+composer install
+```
 
-Complete guides available for every setup scenario:
+3. **Install Node dependencies**
+```bash
+npm install
+```
 
-**🎯 Getting Started (Pick One):**
-- `GIT_CLONE_SETUP.md` - **Recommended!** Setup from GitHub clone
-- `QUICK_START.md` - Create from scratch method
-- `CHEAT_SHEET.md` - One-page quick reference
+4. **Environment configuration**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-**🍎 macOS Specific:**
-- `MACOS_SETUP_GUIDE.md` - Complete macOS installation guide
-- `WHERE_TO_RUN_COMMANDS.md` - Terminal vs VS Code explained
+5. **Configure your `.env` file**
+```env
+APP_NAME=Technorics
+APP_URL=http://127.0.0.1:8000
 
-**📚 Reference Guides:**
-- `GIT_VS_FRESH_INSTALL.md` - Compare setup methods
-- `SETUP_GUIDE.md` - General setup instructions
-- `FILE_PLACEMENT_GUIDE.md` - File organization
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=technorics
+DB_USERNAME=root
+DB_PASSWORD=
 
-Each guide includes:
-- Step-by-step instructions
-- Command examples
-- Troubleshooting tips
-- Visual explanations
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@technorics.com"
+MAIL_FROM_NAME="Technorics"
 
-## 🔮 Future Add-ons Ready
+STRIPE_KEY=your_stripe_public_key
+STRIPE_SECRET=your_stripe_secret_key
 
-The codebase is structured to easily add:
-- Product reviews system
-- Wishlist functionality
-- Advanced filtering
-- Payment integration
-- Admin panel
-- Email notifications
-- And more!
+GOOGLE_PLACES_API_KEY=your_google_places_api_key
+```
 
-## 💡 Usage Tips
+6. **Run migrations and seeders**
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-1. **Start with SETUP_GUIDE.md** - Follow it step by step
-2. **Copy files carefully** - Maintain the directory structure
-3. **Customize as needed** - Colors, fonts, content
-4. **Add your products** - Modify the seeder or add via admin
-5. **Test thoroughly** - Try all features before going live
+7. **Build assets**
+```bash
+npm run build
+# OR for development with hot reload:
+npm run dev
+```
 
-## 🎮 Sample Data
+8. **Create admin user**
+```bash
+php artisan tinker
+```
+```php
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-The seeder includes 12 gaming products across 6 categories:
-- Gaming PCs
-- Graphics Cards
-- Keyboards
-- Mice
-- Headsets
-- Monitors
+User::create([
+    'name' => 'Admin',
+    'email' => 'admin@technorics.com',
+    'password' => Hash::make('password'),
+    'is_admin' => true
+]);
+exit
+```
 
-All with realistic specifications, prices, and descriptions!
+9. **Start the development server**
+```bash
+php artisan serve
+```
 
-## 📞 Need Help?
+10. **Start the queue worker** (for emails)
+```bash
+php artisan queue:work
+```
 
-Refer to:
-- `SETUP_GUIDE.md` for detailed instructions
-- Laravel documentation for framework questions
-- Tailwind CSS docs for styling customization
+Visit: `http://127.0.0.1:8000`
+
+## 🎯 Usage
+
+### Customer Access
+- **Homepage**: `http://127.0.0.1:8000`
+- **Shop**: `http://127.0.0.1:8000/store`
+- **Deals**: `http://127.0.0.1:8000/deals`
+- **Register**: `http://127.0.0.1:8000/register`
+- **Login**: `http://127.0.0.1:8000/login`
+
+### Admin Access
+- **Admin Panel**: `http://127.0.0.1:8000/admin`
+- **Credentials**: admin@technorics.com / password
+- Only users with `is_admin = true` can access
+
+### Testing Emails
+```bash
+php artisan test:emails
+```
+Choose email type and enter recipient address.
+
+## 🗂️ Project Structure
+```
+technorics/
+├── app/
+│   ├── Console/Commands/
+│   │   └── TestEmails.php          # Email testing command
+│   ├── Filament/
+│   │   ├── Pages/
+│   │   │   └── Dashboard.php       # Custom admin dashboard
+│   │   ├── Widgets/
+│   │   │   ├── StatsOverview.php   # Revenue/orders stats
+│   │   │   └── LatestOrders.php    # Recent orders widget
+│   │   └── Resources/              # Auto-discovered resources
+│   ├── Http/Controllers/
+│   │   ├── AuthController.php      # Authentication
+│   │   ├── StoreController.php     # Product browsing
+│   │   ├── CartController.php      # Shopping cart
+│   │   ├── CheckoutController.php  # Checkout & payment
+│   │   ├── OrderController.php     # Order management
+│   │   └── ReviewController.php    # Product reviews
+│   ├── Mail/
+│   │   ├── WelcomeEmail.php
+│   │   ├── OrderConfirmationEmail.php
+│   │   ├── OrderStatusUpdateEmail.php
+│   │   └── OrderShippedEmail.php
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Product.php
+│   │   ├── Category.php
+│   │   ├── Order.php
+│   │   ├── CartItem.php
+│   │   └── Review.php
+│   └── Observers/
+│       └── OrderObserver.php       # Auto-send status emails
+├── database/
+│   ├── migrations/                 # Database schema
+│   └── seeders/                    # Sample data
+├── resources/
+│   ├── css/
+│   │   └── filament/admin/theme.css # Admin panel styling
+│   ├── lang/
+│   │   ├── en/                     # English translations
+│   │   ├── lv/                     # Latvian translations
+│   │   └── ru/                     # Russian translations
+│   └── views/
+│       ├── auth/                   # Login/register
+│       ├── store/                  # Product pages
+│       ├── cart/                   # Shopping cart
+│       ├── checkout/               # Checkout flow
+│       ├── emails/                 # Email templates
+│       └── components/             # Reusable components
+└── public/
+    └── images/
+        └── logo.png                # Technorics logo
+```
+
+## 🎨 Customization
+
+### Changing Colors
+The primary color is Emerald Green. To change:
+1. Update `tailwind.config.js`
+2. Update `app/Providers/Filament/AdminPanelProvider.php`
+3. Update `resources/css/filament/admin/theme.css`
+
+### Adding Products
+Use the admin panel at `/admin` or create a seeder in `database/seeders/`
+
+### Email Configuration
+Update email templates in `resources/views/emails/`
+Configure SMTP in `.env` file
+
+## 🌐 Multi-Language
+
+Supported languages:
+- 🇬🇧 English (en)
+- 🇱🇻 Latvian (lv)
+- 🇷🇺 Russian (ru)
+
+Add translations in `resources/lang/{locale}/messages.php`
+
+## 🔒 Security
+
+- CSRF protection enabled
+- Password hashing with bcrypt
+- Admin-only routes protected
+- XSS protection
+- SQL injection prevention via Eloquent ORM
+
+## 📝 License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
+
+## 👨‍💻 Developer
+
+**Marsels Ziedins**
+- Email: marselsziedins@example.com
+- Location: Riga, Latvia
+
+## �� Acknowledgments
+
+- Laravel Framework
+- Filament Admin Panel
+- Tailwind CSS
+- Stripe Payment Gateway
+- Google Places API
+- Alpine.js
+
+## 📞 Support
+
+For support, email info@technorics.com or create an issue in the repository.
 
 ---
 
-**Ready to build your gaming empire? Let's go! 🚀**
+Made with 💚 by Marsels Ziedins
