@@ -295,7 +295,7 @@ This project is open-sourced software licensed under the [MIT license](LICENSE).
 ## 👨‍💻 Developer
 
 **Marsels Ziedins**
-- Email: marselsziedins@example.com
+- Email: ziedinsmarsels@gmail.com
 - Location: Riga, Latvia
 
 ## �� Acknowledgments
