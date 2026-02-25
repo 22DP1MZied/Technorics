@@ -142,3 +142,58 @@ Route::middleware('auth')->group(function () {
     Route::put('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
+
+// Guest Password Reset Routes
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+
+Route::middleware('guest')->group(function () {
+    Route::get('forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+    
+    Route::post('forgot-password', function (Request $request) {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+                    ? back()->with(['status' => 'We have emailed your password reset link!'])
+                    : back()->withErrors(['email' => 'We could not find a user with that email address.']);
+    })->name('password.email');
+    
+    Route::get('reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token, 'email' => request('email')]);
+    })->name('password.reset');
+    
+    Route::post('reset-password', function (Request $request) {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+                    ? redirect()->route('login')->with('status', 'Your password has been reset!')
+                    : back()->withErrors(['email' => [__($status)]]);
+    })->name('password.update');
+});
+
+// Contact form submission
+Route::post('/pages/contact', [\App\Http\Controllers\PagesController::class, 'submitContact'])->name('pages.contact.submit');

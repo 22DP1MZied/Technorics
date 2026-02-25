@@ -57,4 +57,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(\App\Models\CartItem::class);
     }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
 }
