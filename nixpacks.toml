@@ -5,4 +5,4 @@ NIXPACKS_PHP_ROOT_DIR = "/app/public"
 nixPkgs = ["nginx", "php82", "php82Packages.composer", "nodejs_22", "php82Extensions.bcmath", "php82Extensions.ctype", "php82Extensions.curl", "php82Extensions.mbstring", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.tokenizer", "php82Extensions.xml"]
 
 [start]
-cmd = "php-fpm & nginx -g 'daemon off;'"
+cmd = "php-fpm82 & sleep 1 && nginx -g 'daemon off;'"
