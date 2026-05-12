@@ -2,7 +2,7 @@
 NIXPACKS_PHP_ROOT_DIR = "/app/public"
 
 [phases.setup]
-nixPkgs = ["nginx", "php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.json", "php82Extensions.bcmath", "php82Extensions.curl"]
+nixPkgs = ["nginx", "php82", "php82Extensions.bcmath", "php82Extensions.ctype", "php82Extensions.curl", "php82Extensions.mbstring", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.tokenizer", "php82Extensions.xml"]
 
 [start]
 cmd = "php-fpm & nginx -g 'daemon off;'"
