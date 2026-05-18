@@ -10,18 +10,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
         $cartItems = $this->getCartItems();
-        
+
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
-        // Use discount_price ?? price instead of final_price
         $subtotal = $cartItems->sum(function($item) {
             $price = $item->product->discount_price ?? $item->product->price;
             return $price * $item->quantity;
@@ -31,7 +32,15 @@ class CheckoutController extends Controller
         $tax = $subtotal * 0.10;
         $total = $subtotal + $shipping + $tax;
 
-        return view('checkout.index', compact('cartItems', 'subtotal', 'shipping', 'tax', 'total'));
+        // Izveido Stripe Payment Intent
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $paymentIntent = PaymentIntent::create([
+            'amount' => round($total * 100), // Stripe izmanto centus
+            'currency' => 'eur',
+            'metadata' => ['user_id' => Auth::id()],
+        ]);
+
+        return view('checkout.index', compact('cartItems', 'subtotal', 'shipping', 'tax', 'total', 'paymentIntent'));
     }
 
     public function process(Request $request)
@@ -45,7 +54,7 @@ class CheckoutController extends Controller
             'shipping_state' => 'required|string',
             'shipping_zip' => 'required|string',
             'shipping_country' => 'required|string',
-            'payment_method' => 'required|string',
+            'payment_intent_id' => 'required|string',
             'notes' => 'nullable|string',
         ]);
 
@@ -55,7 +64,14 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
-        // Use discount_price ?? price instead of final_price
+        // Pārbauda vai maksājums veiksmīgs
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
+
+        if ($paymentIntent->status !== 'succeeded') {
+            return back()->with('error', 'Payment was not successful. Please try again.');
+        }
+
         $subtotal = $cartItems->sum(function($item) {
             $price = $item->product->discount_price ?? $item->product->price;
             return $price * $item->quantity;
@@ -67,11 +83,10 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
-            // Create order
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'order_number' => Order::generateOrderNumber(),
-                'status' => 'pending',
+                'status' => 'processing',
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'shipping' => $shipping,
@@ -84,16 +99,14 @@ class CheckoutController extends Controller
                 'shipping_state' => $validated['shipping_state'],
                 'shipping_zip' => $validated['shipping_zip'],
                 'shipping_country' => $validated['shipping_country'],
-                'payment_method' => $validated['payment_method'],
-                'payment_status' => 'pending',
+                'payment_method' => 'stripe',
+                'payment_status' => 'paid',
+                'payment_intent_id' => $validated['payment_intent_id'],
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            // Create order items and update stock
             foreach ($cartItems as $item) {
-                // Use discount_price ?? price instead of final_price
                 $price = $item->product->discount_price ?? $item->product->price;
-                
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
@@ -101,20 +114,16 @@ class CheckoutController extends Controller
                     'price' => $price,
                     'total' => $price * $item->quantity,
                 ]);
-
-                // Decrease stock
                 $item->product->decrement('stock', $item->quantity);
             }
 
-            // Clear cart
             CartItem::where('user_id', Auth::id())->delete();
 
-            // Send order confirmation email
             Mail::to($order->shipping_email)->send(new OrderConfirmationEmail($order));
 
             DB::commit();
 
-            return redirect()->route('checkout.confirmation', $order)->with('success', 'Order placed successfully! Check your email for confirmation.');
+            return redirect()->route('checkout.confirmation', $order)->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -124,14 +133,10 @@ class CheckoutController extends Controller
 
     public function confirmation(Order $order)
     {
-        // Make sure user can only view their own orders
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
-
-        // Load items and product relationships
         $order->load(['items.product']);
-
         return view('checkout.confirmation', compact('order'));
     }
 
