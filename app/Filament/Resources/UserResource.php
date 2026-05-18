@@ -14,80 +14,34 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationLabel = 'Lietotāji';
+    protected static ?string $navigationGroup = 'Lietotāju pārvaldība';
+    protected static ?string $modelLabel = 'Lietotājs';
+    protected static ?string $pluralModelLabel = 'Lietotāji';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
-                
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create')
-                    ->maxLength(255),
-                
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('name')->label('Vārds')->required()->maxLength(255),
+            Forms\Components\TextInput::make('email')->label('E-pasts')->email()->required()->maxLength(255)->unique(ignoreRecord: true),
+            Forms\Components\TextInput::make('password')->label('Parole')->password()->dehydrateStateUsing(fn ($state) => Hash::make($state))->dehydrated(fn ($state) => filled($state))->required(fn (string $context): bool => $context === 'create')->maxLength(255),
+            Forms\Components\DateTimePicker::make('email_verified_at')->label('E-pasts apstiprināts'),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
-                
-                Tables\Columns\IconColumn::make('email_verified_at')
-                    ->label('Verified')
-                    ->boolean(),
-                
-                Tables\Columns\TextColumn::make('orders_count')
-                    ->counts('orders')
-                    ->label('Orders'),
-                
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        return $table->columns([
+            Tables\Columns\TextColumn::make('name')->label('Vārds')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('email')->label('E-pasts')->searchable()->sortable(),
+            Tables\Columns\IconColumn::make('email_verified_at')->label('Apstiprināts')->boolean(),
+            Tables\Columns\TextColumn::make('orders_count')->counts('orders')->label('Pasūtījumi'),
+            Tables\Columns\TextColumn::make('created_at')->label('Reģistrēts')->dateTime()->sortable(),
+        ])->filters([])->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()])->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    public static function getRelations(): array { return []; }
 
     public static function getPages(): array
     {

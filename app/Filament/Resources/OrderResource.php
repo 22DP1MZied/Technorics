@@ -13,147 +13,49 @@ use Filament\Tables\Table;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-
-    protected static ?string $navigationGroup = 'Shop';
+    protected static ?string $navigationLabel = 'Pasūtījumi';
+    protected static ?string $navigationGroup = 'Veikals';
+    protected static ?string $modelLabel = 'Pasūtījums';
+    protected static ?string $pluralModelLabel = 'Pasūtījumi';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Order Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('order_number')
-                            ->disabled(),
-                        
-                        Forms\Components\Select::make('user_id')
-                            ->relationship('user', 'name')
-                            ->required()
-                            ->searchable(),
-                        
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'processing' => 'Processing',
-                                'shipped' => 'Shipped',
-                                'delivered' => 'Delivered',
-                                'cancelled' => 'Cancelled',
-                            ])
-                            ->required(),
-                        
-                        Forms\Components\Select::make('payment_status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'paid' => 'Paid',
-                                'failed' => 'Failed',
-                            ])
-                            ->required(),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Pricing')
-                    ->schema([
-                        Forms\Components\TextInput::make('subtotal')
-                            ->numeric()
-                            ->prefix('€')
-                            ->disabled(),
-                        
-                        Forms\Components\TextInput::make('tax')
-                            ->numeric()
-                            ->prefix('€')
-                            ->disabled(),
-                        
-                        Forms\Components\TextInput::make('shipping')
-                            ->numeric()
-                            ->prefix('€')
-                            ->disabled(),
-                        
-                        Forms\Components\TextInput::make('total')
-                            ->numeric()
-                            ->prefix('€')
-                            ->disabled(),
-                    ])->columns(4),
-
-                Forms\Components\Section::make('Shipping Information')
-                    ->schema([
-                        Forms\Components\Textarea::make('shipping_address')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+        return $form->schema([
+            Forms\Components\Section::make('Pasūtījuma informācija')->schema([
+                Forms\Components\TextInput::make('order_number')->label('Pasūtījuma numurs')->disabled(),
+                Forms\Components\Select::make('user_id')->label('Klients')->relationship('user', 'name')->required()->searchable(),
+                Forms\Components\Select::make('status')->label('Statuss')->options(['pending' => 'Gaida', 'processing' => 'Apstrādē', 'shipped' => 'Nosūtīts', 'delivered' => 'Piegādāts', 'cancelled' => 'Atcelts'])->required(),
+                Forms\Components\Select::make('payment_status')->label('Maksājuma statuss')->options(['pending' => 'Gaida', 'paid' => 'Apmaksāts', 'failed' => 'Neizdevās'])->required(),
+            ])->columns(2),
+            Forms\Components\Section::make('Cenas')->schema([
+                Forms\Components\TextInput::make('subtotal')->label('Starpsumma')->numeric()->prefix('€')->disabled(),
+                Forms\Components\TextInput::make('tax')->label('PVN')->numeric()->prefix('€')->disabled(),
+                Forms\Components\TextInput::make('shipping')->label('Piegāde')->numeric()->prefix('€')->disabled(),
+                Forms\Components\TextInput::make('total')->label('Kopā')->numeric()->prefix('€')->disabled(),
+            ])->columns(4),
+            Forms\Components\Section::make('Piegādes informācija')->schema([
+                Forms\Components\Textarea::make('shipping_address')->label('Piegādes adrese')->columnSpanFull(),
+            ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('order_number')
-                    ->searchable()
-                    ->sortable(),
-                
-                Tables\Columns\TextColumn::make('user.name')
-                    ->searchable()
-                    ->sortable(),
-                
-                Tables\Columns\TextColumn::make('total')
-                    ->money('EUR')
-                    ->sortable(),
-                
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'secondary' => 'pending',
-                        'warning' => 'processing',
-                        'primary' => 'shipped',
-                        'success' => 'delivered',
-                        'danger' => 'cancelled',
-                    ]),
-                
-                Tables\Columns\BadgeColumn::make('payment_status')
-                    ->label('Payment')
-                    ->colors([
-                        'warning' => 'pending',
-                        'success' => 'paid',
-                        'danger' => 'failed',
-                    ]),
-                
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-            ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'processing' => 'Processing',
-                        'shipped' => 'Shipped',
-                        'delivered' => 'Delivered',
-                        'cancelled' => 'Cancelled',
-                    ]),
-                
-                Tables\Filters\SelectFilter::make('payment_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'paid' => 'Paid',
-                        'failed' => 'Failed',
-                    ]),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->defaultSort('created_at', 'desc');
+        return $table->columns([
+            Tables\Columns\TextColumn::make('order_number')->label('Pasūtījums #')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('user.name')->label('Klients')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('total')->label('Kopā')->money('EUR')->sortable(),
+            Tables\Columns\BadgeColumn::make('status')->label('Statuss')->formatStateUsing(fn (string $state): string => match ($state) {'pending' => 'Gaida', 'processing' => 'Apstrādē', 'shipped' => 'Nosūtīts', 'delivered' => 'Piegādāts', 'cancelled' => 'Atcelts', default => $state})->colors(['secondary' => 'pending', 'warning' => 'processing', 'primary' => 'shipped', 'success' => 'delivered', 'danger' => 'cancelled']),
+            Tables\Columns\BadgeColumn::make('payment_status')->label('Maksājums')->formatStateUsing(fn (string $state): string => match ($state) {'pending' => 'Gaida', 'paid' => 'Apmaksāts', 'failed' => 'Neizdevās', default => $state})->colors(['warning' => 'pending', 'success' => 'paid', 'danger' => 'failed']),
+            Tables\Columns\TextColumn::make('created_at')->label('Datums')->dateTime()->sortable(),
+        ])->filters([
+            Tables\Filters\SelectFilter::make('status')->label('Statuss')->options(['pending' => 'Gaida', 'processing' => 'Apstrādē', 'shipped' => 'Nosūtīts', 'delivered' => 'Piegādāts', 'cancelled' => 'Atcelts']),
+            Tables\Filters\SelectFilter::make('payment_status')->label('Maksājuma statuss')->options(['pending' => 'Gaida', 'paid' => 'Apmaksāts', 'failed' => 'Neizdevās']),
+        ])->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()])->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])])->defaultSort('created_at', 'desc');
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    public static function getRelations(): array { return []; }
 
     public static function getPages(): array
     {

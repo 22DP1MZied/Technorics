@@ -19,126 +19,192 @@ class AiAssistantController extends Controller
         ]);
 
         $messages = $request->input('messages');
-        
-        // Get store context
         $storeContext = $this->getStoreContext();
-        
-        // System prompt
-        $systemPrompt = "You are the Technorics AI Shopping Assistant. You help customers with:
+        $productFormat = '[{"id": 1, "name": "Product Name", "reason": "Short reason"}]';
+        $addFormat = '[{"id": 1}, {"id": 2}]';
 
-1. **Product Recommendations**: Suggest products based on budget, needs, and preferences
-2. **PC Building**: Help customers build custom PC configurations within their budget
-3. **Product Information**: Answer questions about specifications, compatibility, availability
-4. **Store Policies**: Explain shipping, returns, warranties, and policies
-5. **Order Help**: Assist with tracking orders, checkout process
-6. **Navigation**: Help users find products or pages on the site
-
-**CRITICAL RULES:**
-- ONLY answer questions related to Technorics store, products, policies, or shopping
-- If asked about anything NOT related to the store (weather, news, general knowledge, other topics), respond: \"I'm the Technorics shopping assistant and can only help with store-related questions. Is there anything about our products or services I can help you with?\"
-- Be friendly, helpful, and concise
-- When recommending products, mention prices in Euros (€)
-- For PC builds, ensure compatibility between components
-
-**Current Store Inventory:**
-$storeContext
-
-Be helpful and guide customers to make informed purchases!";
+        $systemPrompt = "You are Technorics AI Shopping Assistant.\n"
+            . "RULES:\n"
+            . "- Only answer about Technorics store and products\n"
+            . "- Be concise, max 150 words per response\n"
+            . "- Recommend max 4 products at a time\n"
+            . "- Prices in EUR\n\n"
+            . "PRODUCT SUGGESTIONS: When recommending products, add this at the END:\n"
+            . "<products>\n" . $productFormat . "\n</products>\n\n"
+            . "ADD TO CART: If the user says they want to add products to cart (e.g. 'ieliec grozā', 'add to cart', 'добавь в корзину'), add this at the END:\n"
+            . "<add_to_cart>\n" . $addFormat . "\n</add_to_cart>\n\n"
+            . "Use exact product IDs from inventory. Only add products that were previously recommended.\n\n"
+            . "INVENTORY:\n" . $storeContext;
 
         try {
             $apiKey = env('GROQ_API_KEY');
-            
             if (!$apiKey) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'API key not configured. Please add GROQ_API_KEY to your .env file.',
-                ], 500);
+                return response()->json(['success' => false, 'message' => 'API key not configured.'], 500);
             }
 
-            // Prepare messages with system prompt
-            $apiMessages = [
-                ['role' => 'system', 'content' => $systemPrompt]
-            ];
-            
-            foreach ($messages as $msg) {
-                $apiMessages[] = [
-                    'role' => $msg['role'],
-                    'content' => $msg['content']
-                ];
+            $recentMessages = array_slice($messages, -6);
+            $apiMessages = [['role' => 'system', 'content' => $systemPrompt]];
+            foreach ($recentMessages as $msg) {
+                $apiMessages[] = ['role' => $msg['role'], 'content' => mb_substr($msg['content'], 0, 500)];
             }
 
             $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $apiKey,
-                    'Content-Type' => 'application/json',
-                ])
+                ->withHeaders(['Authorization' => 'Bearer ' . $apiKey, 'Content-Type' => 'application/json'])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
                     'model' => 'llama-3.3-70b-versatile',
                     'messages' => $apiMessages,
-                    'max_tokens' => 1024,
+                    'max_tokens' => 500,
                     'temperature' => 0.7,
                 ]);
 
             if ($response->successful()) {
                 $data = $response->json();
+                $rawMessage = $data['choices'][0]['message']['content'] ?? 'No response';
+
+                // Produktu ieteikumi
+                $suggestedProducts = [];
+                if (preg_match('/<products>(.*?)<\/products>/s', $rawMessage, $matches)) {
+                    $decoded = json_decode(trim($matches[1]), true);
+                    if (is_array($decoded)) {
+                        foreach ($decoded as $item) {
+                            $product = Product::find($item['id'] ?? null);
+                            if ($product) {
+                                $suggestedProducts[] = [
+                                    'id' => $product->id,
+                                    'name' => $product->name,
+                                    'price' => $product->discount_price ?? $product->price,
+                                    'original_price' => $product->discount_price ? $product->price : null,
+                                    'image' => $product->image_url,
+                                    'reason' => $item['reason'] ?? '',
+                                    'in_stock' => $product->stock > 0,
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                // Automātiska pievienošana grozam
+                $addedProducts = [];
+                if (preg_match('/<add_to_cart>(.*?)<\/add_to_cart>/s', $rawMessage, $matches)) {
+                    $decoded = json_decode(trim($matches[1]), true);
+                    if (is_array($decoded)) {
+                        foreach ($decoded as $item) {
+                            $product = Product::find($item['id'] ?? null);
+                            if ($product && $product->stock > 0) {
+                                $cartItem = \App\Models\CartItem::where('product_id', $product->id)
+                                    ->where(function ($query) {
+                                        if (\Auth::check()) {
+                                            $query->where('user_id', \Auth::id());
+                                        } else {
+                                            $query->where('session_id', session()->getId());
+                                        }
+                                    })->first();
+
+                                if ($cartItem) {
+                                    $cartItem->quantity += 1;
+                                    $cartItem->save();
+                                } else {
+                                    \App\Models\CartItem::create([
+                                        'user_id' => \Auth::id(),
+                                        'session_id' => \Auth::check() ? null : session()->getId(),
+                                        'product_id' => $product->id,
+                                        'quantity' => 1,
+                                        'price' => $product->discount_price ?? $product->price,
+                                    ]);
+                                }
+                                $addedProducts[] = $product->name;
+                            }
+                        }
+                    }
+                }
+
+                $cleanMessage = trim(preg_replace('/<products>.*?<\/products>/s', '', $rawMessage));
+                $cleanMessage = trim(preg_replace('/<add_to_cart>.*?<\/add_to_cart>/s', '', $cleanMessage));
+
+                $cartCount = \App\Models\CartItem::where(function ($query) {
+                    if (\Auth::check()) {
+                        $query->where('user_id', \Auth::id());
+                    } else {
+                        $query->where('session_id', session()->getId());
+                    }
+                })->sum('quantity');
+
                 return response()->json([
                     'success' => true,
-                    'message' => $data['choices'][0]['message']['content'] ?? 'No response',
+                    'message' => $cleanMessage,
+                    'suggested_products' => $suggestedProducts,
+                    'added_to_cart' => $addedProducts,
+                    'cart_count' => $cartCount,
                 ]);
             } else {
-                Log::error('Groq API Error', [
-                    'status' => $response->status(),
-                    'body' => $response->body()
-                ]);
-                
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Sorry, I encountered an error. Please try again.',
-                ], 500);
+                Log::error('Groq API Error', ['status' => $response->status(), 'body' => $response->body()]);
+                return response()->json(['success' => false, 'message' => 'Sorry, I encountered an error. Please try again.'], 500);
             }
         } catch (\Exception $e) {
-            Log::error('Exception in AI chat', [
-                'error' => $e->getMessage()
-            ]);
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, I encountered an error. Please try again.',
-            ], 500);
+            Log::error('Exception in AI chat', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Sorry, I encountered an error. Please try again.'], 500);
         }
+    }
+
+    public function addToCart(Request $request)
+    {
+        $request->validate(['product_id' => 'required|integer|exists:products,id']);
+
+        $product = Product::findOrFail($request->product_id);
+
+        $cartItem = \App\Models\CartItem::where('product_id', $product->id)
+            ->where(function ($query) {
+                if (\Auth::check()) {
+                    $query->where('user_id', \Auth::id());
+                } else {
+                    $query->where('session_id', session()->getId());
+                }
+            })->first();
+
+        if ($cartItem) {
+            $cartItem->quantity += 1;
+            $cartItem->save();
+        } else {
+            \App\Models\CartItem::create([
+                'user_id' => \Auth::id(),
+                'session_id' => \Auth::check() ? null : session()->getId(),
+                'product_id' => $product->id,
+                'quantity' => 1,
+                'price' => $product->discount_price ?? $product->price,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Produkts pievienots grozam!',
+            'cart_count' => \App\Models\CartItem::where(function ($query) {
+                if (\Auth::check()) {
+                    $query->where('user_id', \Auth::id());
+                } else {
+                    $query->where('session_id', session()->getId());
+                }
+            })->sum('quantity'),
+        ]);
     }
 
     private function getStoreContext()
     {
         $categories = Category::withCount('products')->get();
         $products = Product::where('is_active', true)
-            ->select('name', 'category_id', 'price', 'discount_price', 'brand', 'stock')
-            ->get()
-            ->groupBy('category_id');
+            ->select('id', 'name', 'category_id', 'price', 'discount_price', 'brand', 'stock')
+            ->get()->groupBy('category_id');
 
-        $context = "**Categories & Products:**\n\n";
-        
+        $context = '';
         foreach ($categories as $category) {
-            $context .= "**{$category->name}** ({$category->products_count} products):\n";
-            
-            $categoryProducts = $products->get($category->id, collect());
-            foreach ($categoryProducts->take(8) as $product) {
+            $context .= $category->name . ":\n";
+            foreach ($products->get($category->id, collect())->take(3) as $product) {
                 $price = $product->discount_price ?? $product->price;
-                $context .= "- {$product->name} by {$product->brand}: €" . number_format($price, 2);
-                if ($product->discount_price) {
-                    $context .= " (was €" . number_format($product->price, 2) . ")";
-                }
-                $context .= " - " . ($product->stock > 0 ? "In Stock" : "Out of Stock") . "\n";
+                $context .= '- [ID:' . $product->id . '] ' . $product->name . ' by ' . $product->brand . ': EUR ' . number_format($price, 2);
+                $context .= ' - ' . ($product->stock > 0 ? 'In Stock' : 'Out of Stock') . "\n";
             }
             $context .= "\n";
         }
-
-        $context .= "\n**Store Policies:**\n";
-        $context .= "- Free shipping on orders over €100\n";
-        $context .= "- 30-day return policy\n";
-        $context .= "- 1-year warranty on all products\n";
-        $context .= "- Multiple payment methods accepted\n";
-
+        $context .= "Policies: Free shipping over EUR 100, 30-day returns, 1-year warranty.\n";
         return $context;
     }
 }

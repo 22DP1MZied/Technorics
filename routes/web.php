@@ -197,3 +197,9 @@ Route::middleware('guest')->group(function () {
 
 // Contact form submission
 Route::post('/pages/contact', [\App\Http\Controllers\PagesController::class, 'submitContact'])->name('pages.contact.submit');
+
+// AI Assistant
+Route::post('/ai-assistant/chat', [App\Http\Controllers\AiAssistantController::class, 'chat']);
+Route::post('/ai-assistant/add-to-cart', [App\Http\Controllers\AiAssistantController::class, 'addToCart']);
+
+

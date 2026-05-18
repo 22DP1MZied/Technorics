@@ -14,27 +14,12 @@ class StatsOverviewWidget extends BaseWidget
     {
         $totalRevenue = Order::where('payment_status', 'paid')->sum('total');
         $todayOrders = Order::whereDate('created_at', today())->count();
-        
+
         return [
-            Stat::make('Total Revenue', '€' . number_format($totalRevenue, 2))
-                ->description('All time revenue')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('success'),
-            
-            Stat::make('Total Orders', Order::count())
-                ->description($todayOrders . ' orders today')
-                ->descriptionIcon('heroicon-m-shopping-bag')
-                ->color('info'),
-            
-            Stat::make('Total Products', Product::count())
-                ->description(Product::where('stock', '>', 0)->count() . ' in stock')
-                ->descriptionIcon('heroicon-m-cube')
-                ->color('warning'),
-            
-            Stat::make('Total Customers', User::count())
-                ->description('Registered users')
-                ->descriptionIcon('heroicon-m-users')
-                ->color('primary'),
+            Stat::make('Kopējie ieņēmumi', '€' . number_format($totalRevenue, 2))->description('Visu laiku ieņēmumi')->descriptionIcon('heroicon-m-arrow-trending-up')->color('success'),
+            Stat::make('Kopējie pasūtījumi', Order::count())->description($todayOrders . ' pasūtījumi šodien')->descriptionIcon('heroicon-m-shopping-bag')->color('info'),
+            Stat::make('Kopējie produkti', Product::count())->description(Product::where('stock', '>', 0)->count() . ' noliktavā')->descriptionIcon('heroicon-m-cube')->color('warning'),
+            Stat::make('Kopējie klienti', User::count())->description('Reģistrētie lietotāji')->descriptionIcon('heroicon-m-users')->color('primary'),
         ];
     }
 }

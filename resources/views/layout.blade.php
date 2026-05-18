@@ -110,7 +110,8 @@
                                 </svg>
                                 <span class="hidden lg:block">Admin</span>
                             </a>
-                        @endif
+                        
+                    @endif
                     @endauth
 
                     <!-- Compare Button -->
@@ -170,11 +171,9 @@
                         @php
                             $cartCount = \App\Models\CartItem::where('user_id', auth()->id())->count();
                         @endphp
-                        @if($cartCount > 0)
-                        <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        <span id="cart-count" class="{{ $cartCount == 0 ? 'hidden ' : '' }} absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                             {{ $cartCount }}
                         </span>
-                        @endif
                         @endauth
                     </a>
                 </div>
