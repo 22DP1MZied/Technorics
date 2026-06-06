@@ -1,6 +1,4 @@
 #!/bin/sh
-echo "Starting nginx..."
-nginx -t
+adduser -D -u 1000 appuser 2>/dev/null || true
 nginx
-echo "Starting php-fpm..."
 php-fpm -y /app/fpm.conf -F
