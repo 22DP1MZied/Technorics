@@ -1,3 +1,3 @@
 #!/bin/sh
 nginx
-php-fpm
+php-fpm -y /app/fpm.conf
