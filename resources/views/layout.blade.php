@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <span>📞 +1 800-123-4567</span>
-                <span>✉️ info@technorics.com</span>
+                <span>✉️ noreply.technorics@gmail.com</span>
             </div>
             <div class="flex items-center gap-4">
                 <span>🚚 {{ __('messages.free_shipping') }}</span>
@@ -278,9 +278,9 @@
                 <div>
                     <h3 class="font-bold mb-4">{{ __('messages.contact') }}</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li>📞 +1 (800) 123-4567</li>
-                        <li>✉️ info@technorics.com</li>
-                        <li>⏰ Mon-Fri 9AM-6PM EST</li>
+                        <li>📞 +371 2000 0000</li>
+                        <li>✉️ noreply.technorics@gmail.com</li>
+                        <li>⏰ {{ __('messages.phone_hours') }}</li>
                     </ul>
                 </div>
             </div>
