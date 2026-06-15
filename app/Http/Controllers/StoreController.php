@@ -160,21 +160,58 @@ class StoreController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('q', ''); // Get search term
+        $query = $request->input('q', '');
         $searchTerm = $query;
-        
+
+        $from = ['ā','č','ē','ģ','ī','ķ','ļ','ņ','š','ū','ž','Ā','Č','Ē','Ģ','Ī','Ķ','Ļ','Ņ','Š','Ū','Ž'];
+        $to   = ['a','c','e','g','i','k','l','n','s','u','z','A','C','E','G','I','K','L','N','S','U','Z'];
+        $queryNorm = mb_strtolower(str_replace($from, $to, $query));
+
+        $categoryTranslations = [
+            'portatīvie datori' => 'Laptops', 'portatīvais dators' => 'Laptops',
+            'portativi datori' => 'Laptops', 'laptop' => 'Laptops', 'dators' => 'Laptops',
+            'tastatūras' => 'Keyboards', 'tastatūra' => 'Keyboards',
+            'klaviaturas' => 'Keyboards', 'klaviatura' => 'Keyboards',
+            'klaviatūras' => 'Keyboards', 'klaviatūra' => 'Keyboards',
+            'peles' => 'Mice', 'pele' => 'Mice',
+            'austiņas' => 'Headsets', 'austiņa' => 'Headsets',
+            'austinas' => 'Headsets', 'austina' => 'Headsets',
+            'monitori' => 'Monitors', 'monitors' => 'Monitors',
+            'krēsli' => 'Chairs', 'krēsls' => 'Chairs',
+            'kresli' => 'Chairs', 'kresls' => 'Chairs',
+            'procesori' => 'CPUs (Processors)', 'procesors' => 'CPUs (Processors)', 'cpu' => 'CPUs (Processors)',
+            'videokartes' => 'Graphics Cards (GPUs)', 'videokarte' => 'Graphics Cards (GPUs)', 'gpu' => 'Graphics Cards (GPUs)',
+            'mātesplates' => 'Motherboards', 'mātesplate' => 'Motherboards',
+            'matesplates' => 'Motherboards', 'matesplate' => 'Motherboards',
+            'operatīvā atmiņa' => 'RAM (Memory)', 'atmiņa' => 'RAM (Memory)',
+            'operativa atmina' => 'RAM (Memory)', 'atmina' => 'RAM (Memory)', 'ram' => 'RAM (Memory)',
+            'atmiņas ierīces' => 'Storage (SSD/HDD)', 'ssd' => 'Storage (SSD/HDD)', 'hdd' => 'Storage (SSD/HDD)',
+            'barošanas bloki' => 'Power Supplies (PSUs)', 'barosanas bloki' => 'Power Supplies (PSUs)', 'psu' => 'Power Supplies (PSUs)',
+            'datoru korpusi' => 'PC Cases', 'korpuss' => 'PC Cases',
+            'dzesēšanas sistēmas' => 'Cooling Systems', 'dzesētājs' => 'Cooling Systems',
+            'ноутбуки' => 'Laptops', 'клавиатуры' => 'Keyboards',
+            'мыши' => 'Mice', 'наушники' => 'Headsets',
+            'мониторы' => 'Monitors', 'кресла' => 'Chairs',
+            'процессоры' => 'CPUs (Processors)', 'видеокарты' => 'Graphics Cards (GPUs)',
+            'материнские платы' => 'Motherboards', 'оперативная память' => 'RAM (Memory)',
+            'накопители' => 'Storage (SSD/HDD)', 'блоки питания' => 'Power Supplies (PSUs)',
+            'корпуса' => 'PC Cases', 'системы охлаждения' => 'Cooling Systems',
+        ];
+
+        $queryLower = mb_strtolower($query);
+        $englishQuery = $categoryTranslations[$queryLower] ?? $categoryTranslations[$queryNorm] ?? $query;
+
         $productsQuery = Product::with('category')
             ->where('is_active', true);
 
         if ($query) {
-            $productsQuery->where(function($q) use ($query) {
-                // Search in product name, description, brand
+            $productsQuery->where(function($q) use ($query, $englishQuery) {
                 $q->where('name', 'like', '%' . $query . '%')
                   ->orWhere('description', 'like', '%' . $query . '%')
                   ->orWhere('brand', 'like', '%' . $query . '%')
-                  // ALSO search in category name
-                  ->orWhereHas('category', function($q2) use ($query) {
-                      $q2->where('name', 'like', '%' . $query . '%');
+                  ->orWhereHas('category', function($q2) use ($query, $englishQuery) {
+                      $q2->where('name', 'like', '%' . $query . '%')
+                         ->orWhere('name', 'like', '%' . $englishQuery . '%');
                   });
             });
         }
