@@ -14,9 +14,31 @@ class StoreController extends Controller
         $query = Product::with('category')->where('is_active', true);
 
         if ($request->has('category') && $request->category) {
-            $query->whereHas('category', function($q) use ($request) {
-                $q->where('slug', $request->category);
+            $categories_filter = is_array($request->category) ? $request->category : [$request->category];
+            $query->whereHas('category', function($q) use ($categories_filter) {
+                $q->whereIn('slug', $categories_filter);
             });
+        }
+
+        if ($request->has('brand') && $request->brand) {
+            $brands_filter = is_array($request->brand) ? $request->brand : [$request->brand];
+            $query->whereIn('brand', $brands_filter);
+        }
+
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->has('in_stock') && $request->in_stock) {
+            $query->where('stock', '>', 0);
+        }
+
+        if ($request->has('on_sale') && $request->on_sale) {
+            $query->whereNotNull('discount_price');
         }
 
         if ($request->has('search') && $request->search) {
@@ -37,6 +59,12 @@ class StoreController extends Controller
                 case 'newest':
                     $query->orderBy('created_at', 'desc');
                     break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'rating':
+                    $query->orderBy('rating', 'desc');
+                    break;
                 default:
                     $query->orderBy('created_at', 'desc');
             }
@@ -44,16 +72,15 @@ class StoreController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::withCount('products')->get();
         
-        // Get all unique brands from products
         $brands = Product::where('is_active', true)
             ->select('brand')
             ->distinct()
             ->orderBy('brand')
             ->pluck('brand')
-            ->filter(); // Remove null values
+            ->filter();
 
         return view('store.index', compact('products', 'categories', 'brands'));
     }
@@ -65,13 +92,8 @@ class StoreController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Calculate average rating
         $averageRating = $product->reviews->avg('rating') ?? 0;
-        
-        // Get all reviews (most recent first)
         $reviews = $product->reviews()->with('user')->latest()->get();
-
-        // Get related products and frequently bought together
         $relatedProducts = $product->getRelatedProducts(4);
         $frequentlyBoughtTogether = $product->getFrequentlyBoughtTogether(4);
 
@@ -85,6 +107,27 @@ class StoreController extends Controller
         $query = Product::where('category_id', $category->id)
             ->where('is_active', true);
 
+        if ($request->has('brand') && $request->brand) {
+            $brands_filter = is_array($request->brand) ? $request->brand : [$request->brand];
+            $query->whereIn('brand', $brands_filter);
+        }
+
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->has('in_stock') && $request->in_stock) {
+            $query->where('stock', '>', 0);
+        }
+
+        if ($request->has('on_sale') && $request->on_sale) {
+            $query->whereNotNull('discount_price');
+        }
+
         if ($request->has('sort')) {
             switch($request->sort) {
                 case 'price_low':
@@ -96,14 +139,19 @@ class StoreController extends Controller
                 case 'newest':
                     $query->orderBy('created_at', 'desc');
                     break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'rating':
+                    $query->orderBy('rating', 'desc');
+                    break;
                 default:
                     $query->orderBy('created_at', 'desc');
             }
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         
-        // Get brands for this category
         $brands = Product::where('category_id', $category->id)
             ->where('is_active', true)
             ->select('brand')
@@ -117,11 +165,30 @@ class StoreController extends Controller
 
     public function deals(Request $request)
     {
-        // Get products with discount_price (on sale)
         $query = Product::with('category')
             ->where('is_active', true)
             ->whereNotNull('discount_price')
             ->where('discount_price', '<', DB::raw('price'));
+
+        if ($request->has('category') && $request->category) {
+            $categories_filter = is_array($request->category) ? $request->category : [$request->category];
+            $query->whereHas('category', function($q) use ($categories_filter) {
+                $q->whereIn('slug', $categories_filter);
+            });
+        }
+
+        if ($request->has('brand') && $request->brand) {
+            $brands_filter = is_array($request->brand) ? $request->brand : [$request->brand];
+            $query->whereIn('brand', $brands_filter);
+        }
+
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
 
         if ($request->has('sort')) {
             switch($request->sort) {
@@ -138,14 +205,12 @@ class StoreController extends Controller
                     $query->orderBy('created_at', 'desc');
             }
         } else {
-            // Default: sort by biggest discount percentage
             $query->orderByRaw('((price - discount_price) / price * 100) DESC');
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::withCount('products')->get();
         
-        // Get brands from products on sale
         $brands = Product::where('is_active', true)
             ->whereNotNull('discount_price')
             ->where('discount_price', '<', DB::raw('price'))
@@ -216,10 +281,9 @@ class StoreController extends Controller
             });
         }
 
-        $products = $productsQuery->paginate(12);
+        $products = $productsQuery->paginate(12)->withQueryString();
         $categories = Category::withCount('products')->get();
         
-        // Get brands from search results
         $brands = Product::where('is_active', true)
             ->when($query, function($q) use ($query) {
                 $q->where(function($q2) use ($query) {
