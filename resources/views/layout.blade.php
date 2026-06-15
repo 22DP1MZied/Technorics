@@ -23,7 +23,7 @@
     <div class="bg-gray-900 dark:bg-gray-950 text-white py-2 text-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <span>📞 +1 800-123-4567</span>
+                <span>📞 +371 2000 0000</span>
                 <span>✉️ noreply.technorics@gmail.com</span>
             </div>
             <div class="flex items-center gap-4">
