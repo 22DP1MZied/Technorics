@@ -1,6 +1,25 @@
 @extends('layout')
 
-@section('title', $category->name . ' - Technorics')
+@php
+$categoryNames = [
+    'Laptops' => __('messages.cat_laptops'),
+    'Keyboards' => __('messages.cat_keyboards'),
+    'Mice' => __('messages.cat_mice'),
+    'Headsets' => __('messages.cat_headsets'),
+    'Monitors' => __('messages.cat_monitors'),
+    'Chairs' => __('messages.cat_chairs'),
+    'CPUs (Processors)' => __('messages.cat_cpus'),
+    'Graphics Cards (GPUs)' => __('messages.cat_gpus'),
+    'Motherboards' => __('messages.cat_motherboards'),
+    'RAM (Memory)' => __('messages.cat_ram'),
+    'Storage (SSD/HDD)' => __('messages.cat_storage'),
+    'Power Supplies (PSUs)' => __('messages.cat_psus'),
+    'PC Cases' => __('messages.cat_cases'),
+    'Cooling Systems' => __('messages.cat_cooling'),
+];
+$catName = $categoryNames[$category->name] ?? $category->name;
+@endphp
+@section('title', $catName . ' - Technorics')
 
 @section('content')
 <div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
@@ -9,12 +28,12 @@
         <div class="flex items-center gap-2 text-sm mb-6">
             <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ __('messages.home') }}</a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-900 dark:text-white font-semibold">{{ $category->name }}</span>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ $catName }}</span>
         </div>
 
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $category->name }}</h1>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $catName }}</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $products->total() }} {{ __('messages.products') }}</p>
             </div>
         </div>
