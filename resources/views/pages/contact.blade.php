@@ -15,14 +15,14 @@
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 dark:bg-gray-900">
     <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Get in Touch 📧</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-400">We'd love to hear from you!</p>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ __('messages.get_in_touch') }} 📧</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400">{{ __('messages.love_to_hear') }}</p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-12">
         <!-- Contact Form -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a Message</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ __('messages.send_message_title') }}</h2>
             
             @if (session('success'))
                 <div class="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded">
@@ -49,7 +49,7 @@
                 @csrf
                 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Your Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.your_name') }}</label>
                     <input type="text" 
                            name="name" 
                            value="{{ old('name') }}"
@@ -58,7 +58,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.email') }}</label>
                     <input type="email" 
                            name="email" 
                            value="{{ old('email') }}"
@@ -67,33 +67,33 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.subject') }}</label>
                     <select name="subject" 
                             required 
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
-                        <option value="">Select a subject...</option>
+                        <option value="">{{ __('messages.select_subject') }}</option>
                         <option value="General Inquiry" {{ old('subject') == 'General Inquiry' ? 'selected' : '' }}>General Inquiry</option>
                         <option value="Product Question" {{ old('subject') == 'Product Question' ? 'selected' : '' }}>Product Question</option>
                         <option value="Order Support" {{ old('subject') == 'Order Support' ? 'selected' : '' }}>Order Support</option>
                         <option value="Technical Support" {{ old('subject') == 'Technical Support' ? 'selected' : '' }}>Technical Support</option>
-                        <option value="Returns & Refunds" {{ old('subject') == 'Returns & Refunds' ? 'selected' : '' }}>Returns & Refunds</option>
+                        <option value="Returns & Refunds" {{ old('subject') == 'Returns & Refunds' ? 'selected' : '' }}>{{ __('messages.faq_returns_title') }}</option>
                         <option value="Business Inquiry" {{ old('subject') == 'Business Inquiry' ? 'selected' : '' }}>Business Inquiry</option>
                         <option value="Other" {{ old('subject') == 'Other' ? 'selected' : '' }}>Other</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.message') }}</label>
                     <textarea name="message" 
                               rows="5" 
                               required 
-                              placeholder="Tell us how we can help you..."
+                              placeholder="{{ __('messages.tell_us') }}"
                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">{{ old('message') }}</textarea>
                 </div>
 
                 <button type="submit" 
                         class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 rounded-lg font-bold hover:from-emerald-700 hover:to-emerald-800 transform hover:scale-105 transition duration-200 shadow-lg">
-                    Send Message ✉️
+                    {{ __('messages.send_message_btn') }} ✉️
                 </button>
             </form>
         </div>
@@ -108,9 +108,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">Phone</h3>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.phone') }}</h3>
                         <p class="text-gray-600 dark:text-gray-400">+371 2000 0000</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-500">Mon-Fri 9AM-6PM (GMT+2)</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">{{ __('messages.phone_hours') }}</p>
                     </div>
                 </div>
 
@@ -121,9 +121,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">Email</h3>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.email') }}</h3>
                         <p class="text-gray-600 dark:text-gray-400">noreply.technorics@gmail.com</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-500">We'll respond within 24 hours</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">{{ __('messages.respond_24h') }}</p>
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">Address</h3>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.address') }}</h3>
                         <p class="text-gray-600 dark:text-gray-400">
                             Brīvības iela 123<br>
                             Rīga, LV-1001<br>
@@ -150,9 +150,9 @@
                     <svg class="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
-                    <h3 class="font-bold text-gray-900 dark:text-white text-xl">Quick Support</h3>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-xl">{{ __('messages.quick_support') }}</h3>
                 </div>
-                <p class="text-gray-600 dark:text-gray-400 mb-4">Need immediate assistance? Our AI assistant is available 24/7 to help you!</p>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('messages.ai_help') }}</p>
                 <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-emerald-200 dark:border-emerald-700">
                     <p class="text-sm text-gray-700 dark:text-gray-300">
                         💬 Click the <span class="font-bold text-emerald-600 dark:text-emerald-400">AI Assistant</span> button in the bottom-right corner of your screen for instant help.
@@ -165,20 +165,20 @@
                     <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Business Hours
+                    {{ __('messages.business_hours') }}
                 </h3>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div class="flex justify-between">
-                        <span>Monday - Friday:</span>
+                        <span>{{ __('messages.mon_fri') }}:</span>
                         <span class="font-semibold">9:00 AM - 6:00 PM</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>Saturday:</span>
+                        <span>{{ __('messages.saturday') }}:</span>
                         <span class="font-semibold">10:00 AM - 4:00 PM</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>Sunday:</span>
-                        <span class="font-semibold text-red-600 dark:text-red-400">Closed</span>
+                        <span>{{ __('messages.sunday') }}:</span>
+                        <span class="font-semibold text-red-600 dark:text-red-400">{{ __('messages.closed') }}</span>
                     </div>
                 </div>
             </div>
@@ -187,19 +187,19 @@
 
     <!-- FAQ Section -->
     <div class="mt-16">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">Frequently Asked Questions</h2>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">{{ __('messages.faq') }}</h2>
         <div class="grid md:grid-cols-3 gap-6">
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">📦 Shipping & Delivery</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">Free shipping on orders over €100. Delivery within 2-5 business days.</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">📦 {{ __('messages.faq_shipping_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.faq_shipping_desc') }}</p>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">🔄 Returns & Refunds</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">30-day return policy. Full refund if you're not satisfied with your purchase.</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">🔄 {{ __('messages.faq_returns_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.faq_returns_desc') }}</p>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2">🛡️ Warranty</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">All products come with manufacturer's warranty. Extended warranty available.</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2">🛡️ {{ __('messages.faq_warranty_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('messages.faq_warranty_desc') }}</p>
             </div>
         </div>
     </div>

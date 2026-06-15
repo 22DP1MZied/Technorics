@@ -1,107 +1,118 @@
 @extends('layout')
 
-@section('title', 'Blog - Technorics')
+@section('title', __('messages.blog') . ' - Technorics')
 
 @section('content')
-<div class="bg-gray-50 py-4 border-b">
+<div class="bg-gray-50 dark:bg-gray-800 py-4 border-b dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center gap-2 text-sm">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-emerald-600">Home</a>
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">{{ __('messages.home') }}</a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-900 font-semibold">Blog</span>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ __('messages.blog') }}</span>
         </div>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="text-center mb-16">
-        <h1 class="text-5xl font-bold text-gray-900 mb-6">Technorics Blog</h1>
-        <p class="text-xl text-gray-600">Tech tips, product reviews, and industry insights</p>
+<!-- Hero -->
+<div class="bg-gradient-to-br from-gray-900 via-emerald-900 to-teal-900 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl font-bold text-white mb-4">{{ __('messages.blog_title') }}</h1>
+        <p class="text-xl text-emerald-100">{{ __('messages.blog_tagline') }}</p>
     </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
     <!-- Featured Post -->
-    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl overflow-hidden mb-16">
+    <div class="rounded-2xl overflow-hidden mb-16 shadow-xl">
         <div class="grid md:grid-cols-2">
-            <div class="p-12 text-white">
-                <div class="text-emerald-100 text-sm font-semibold mb-4">FEATURED POST</div>
-                <h2 class="text-4xl font-bold mb-4">Top 10 Gaming Laptops of 2024</h2>
-                <p class="text-emerald-100 mb-6">Discover the best gaming laptops that deliver incredible performance without breaking the bank.</p>
-                <a href="#" class="inline-block bg-white text-emerald-600 px-6 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition">
-                    Read Article
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-600 p-12 text-white">
+                <div class="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">⭐ {{ __('messages.featured_post') }}</div>
+                <h2 class="text-4xl font-bold mb-4">{{ __('messages.blog_featured_title') }}</h2>
+                <p class="text-emerald-100 mb-6">{{ __('messages.blog_featured_desc') }}</p>
+                <a href="https://www.techradar.com/best/best-gaming-laptops" target="_blank" class="inline-block bg-white text-emerald-600 px-6 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition">
+                    {{ __('messages.read_more') }} →
                 </a>
             </div>
-            <div class="bg-gray-200 h-64 md:h-auto"></div>
+            <div class="h-64 md:h-auto overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=800" alt="Gaming Setup" class="w-full h-full object-cover">
+            </div>
         </div>
     </div>
 
     <!-- Blog Posts Grid -->
     <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=600" alt="Keyboard" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">TECH TIPS</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">How to Choose the Perfect Keyboard</h3>
-                <p class="text-gray-600 text-sm mb-4">A comprehensive guide to finding the keyboard that matches your typing style and needs.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">⌨️ {{ __('messages.blog_cat_tips') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post1_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post1_desc') }}</p>
+                <a href="https://www.rtings.com/keyboard/reviews/best/gaming" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600" alt="Headset" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">PRODUCT REVIEW</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Best Budget Headsets for 2024</h3>
-                <p class="text-gray-600 text-sm mb-4">Quality audio doesn't have to cost a fortune. Check out our top picks for budget-friendly headsets.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">🎧 {{ __('messages.blog_cat_review') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post2_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post2_desc') }}</p>
+                <a href="https://www.rtings.com/headphones/reviews/best/gaming" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600" alt="Mouse" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">BUYING GUIDE</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Gaming Mouse Buying Guide</h3>
-                <p class="text-gray-600 text-sm mb-4">Everything you need to know about DPI, polling rate, and ergonomics when choosing a gaming mouse.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">🖱️ {{ __('messages.blog_cat_guide') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post3_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post3_desc') }}</p>
+                <a href="https://www.rtings.com/mouse/reviews/best/gaming" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600" alt="PC Gaming" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">INDUSTRY NEWS</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">The Future of PC Gaming</h3>
-                <p class="text-gray-600 text-sm mb-4">Exploring upcoming trends and technologies that will shape the gaming landscape.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">🎮 {{ __('messages.blog_cat_news') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post4_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post4_desc') }}</p>
+                <a href="https://www.pcgamer.com/hardware/" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=600" alt="Gaming Setup" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">SETUP GUIDE</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Building Your Perfect Gaming Setup</h3>
-                <p class="text-gray-600 text-sm mb-4">From desk to chair to monitor placement, create an ergonomic and stylish gaming space.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">🖥️ {{ __('messages.blog_cat_setup') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post5_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post5_desc') }}</p>
+                <a href="https://www.pcmag.com/picks/the-best-gaming-desks" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition">
-            <div class="h-48 bg-gray-200"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition group">
+            <div class="h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=600" alt="Cleaning PC" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+            </div>
             <div class="p-6">
-                <div class="text-xs text-emerald-600 font-semibold mb-2">MAINTENANCE</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">How to Clean Your Electronics</h3>
-                <p class="text-gray-600 text-sm mb-4">Keep your tech looking and performing like new with these simple maintenance tips.</p>
-                <a href="#" class="text-emerald-600 font-semibold hover:underline text-sm">Read more →</a>
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">🔧 {{ __('messages.blog_cat_maintenance') }}</div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('messages.blog_post6_title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ __('messages.blog_post6_desc') }}</p>
+                <a href="https://www.howtogeek.com/clean-gaming-pc/" target="_blank" class="text-emerald-600 font-semibold hover:underline text-sm">{{ __('messages.read_more') }} →</a>
             </div>
         </div>
-    </div>
-
-    <!-- Load More -->
-    <div class="text-center mt-12">
-        <button class="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-emerald-600 hover:text-emerald-600 transition">
-            Load More Articles
-        </button>
     </div>
 </div>
 @endsection

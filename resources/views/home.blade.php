@@ -241,12 +241,46 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">{{ __('messages.shop_by_category') }}</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            @php
+            $categoryNames = [
+                'Laptops' => __('messages.cat_laptops'),
+                'Keyboards' => __('messages.cat_keyboards'),
+                'Mice' => __('messages.cat_mice'),
+                'Headsets' => __('messages.cat_headsets'),
+                'Monitors' => __('messages.cat_monitors'),
+                'Chairs' => __('messages.cat_chairs'),
+                'CPUs (Processors)' => __('messages.cat_cpus'),
+                'Graphics Cards (GPUs)' => __('messages.cat_gpus'),
+                'Motherboards' => __('messages.cat_motherboards'),
+                'RAM (Memory)' => __('messages.cat_ram'),
+                'Storage (SSD/HDD)' => __('messages.cat_storage'),
+                'Power Supplies (PSUs)' => __('messages.cat_psus'),
+                'PC Cases' => __('messages.cat_cases'),
+                'Cooling Systems' => __('messages.cat_cooling'),
+            ];
+            $categoryIcons = [
+                'Laptops' => '💻',
+                'Keyboards' => '⌨️',
+                'Mice' => '🖱️',
+                'Headsets' => '🎧',
+                'Monitors' => '🖥️',
+                'Chairs' => '🪑',
+                'CPUs (Processors)' => '🔲',
+                'Graphics Cards (GPUs)' => '🎮',
+                'Motherboards' => '🔌',
+                'RAM (Memory)' => '💾',
+                'Storage (SSD/HDD)' => '💿',
+                'Power Supplies (PSUs)' => '⚡',
+                'PC Cases' => '🗄️',
+                'Cooling Systems' => '❄️',
+            ];
+            @endphp
             @foreach($categories as $category)
             <a href="{{ route('store.category', $category->slug) }}" class="bg-white dark:bg-gray-700 rounded-xl p-6 text-center hover:shadow-lg transition group">
                 <div class="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900 dark:to-teal-900 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
-                    <span class="text-2xl">🖥️</span>
+                    <span class="text-2xl">{{ $categoryIcons[$category->name] ?? '🖥️' }}</span>
                 </div>
-                <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $category->name }}</h3>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $categoryNames[$category->name] ?? $category->name }}</h3>
                 <span class="text-xs text-gray-600 dark:text-gray-400">{{ $category->products_count }} {{ __('messages.items') }}</span>
             </a>
             @endforeach
@@ -345,7 +379,6 @@
 </style>
 
 <script>
-// Counter Animation
 function animateCounter() {
     const counters = document.querySelectorAll('.counter');
     counters.forEach(counter => {
@@ -368,7 +401,6 @@ function animateCounter() {
     });
 }
 
-// Countdown Timer
 function updateCountdown() {
     const now = new Date();
     const midnight = new Date();
@@ -385,7 +417,6 @@ function updateCountdown() {
     document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 }
 
-// Wishlist Toggle
 function toggleWishlist(productId, button) {
     const isInWishlist = button.getAttribute('data-in-wishlist') === 'true';
     const heartIcon = button.querySelector('svg');
@@ -424,7 +455,6 @@ function toggleWishlist(productId, button) {
     .catch(error => console.error('Error:', error));
 }
 
-// Add to Compare
 function addToCompare(productId, button) {
     fetch(`/compare/add/${productId}`, {
         method: 'POST',
@@ -463,7 +493,6 @@ function showToast(message, type) {
     }, 3000);
 }
 
-// Initialize
 window.addEventListener('load', () => {
     animateCounter();
     updateCountdown();
