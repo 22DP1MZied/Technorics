@@ -286,7 +286,7 @@
             </div>
 
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-                <p>&copy; 2024 {{ __('messages.rights_reserved') }}</p>
+                <p>&copy; 2025 {{ __('messages.rights_reserved') }}</p>
             </div>
         </div>
     </footer>
