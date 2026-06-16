@@ -417,4 +417,18 @@ return [
     'join_technorics' => 'Pievienojies Technorics! 🚀',
     'create_account_desc' => 'Izveidojiet kontu, lai sāktu iepirkties',
     'create_account' => 'Izveidot kontu',
+
+    // Forgot password
+    'forgot_password_title' => 'Aizmirsāt paroli? 🔐',
+    'forgot_password_desc' => 'Neuztraucieties! Ievadiet e-pastu un mēs nosūtīsim atiestatīšanas instrukcijas',
+    'send_reset_link' => 'Nosūtīt atiestatīšanas saiti',
+    'back_to_login' => 'Atpakaļ uz ielogošanos',
+    'enter_email' => 'Ievadiet savu e-pasta adresi',
+
+    // Reset password
+    'set_new_password' => 'Iestatīt jaunu paroli 🔑',
+    'set_new_password_desc' => 'Ievadiet savu jauno paroli zemāk',
+    'reset_password' => 'Atiestatīt paroli',
+    'enter_new_password' => 'Ievadiet jauno paroli (min 8 rakstzīmes)',
+    'confirm_new_password' => 'Apstipriniet jauno paroli',
 ];

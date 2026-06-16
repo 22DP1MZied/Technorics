@@ -407,4 +407,18 @@ return [
     'join_technorics' => 'Join Technorics! 🚀',
     'create_account_desc' => 'Create your account to start shopping',
     'create_account' => 'Create Account',
+
+    // Forgot password
+    'forgot_password_title' => 'Forgot Password? 🔐',
+    'forgot_password_desc' => 'No worries! Enter your email and we\'ll send you reset instructions',
+    'send_reset_link' => 'Send Reset Link',
+    'back_to_login' => 'Back to Login',
+    'enter_email' => 'Enter your email address',
+
+    // Reset password
+    'set_new_password' => 'Set New Password 🔑',
+    'set_new_password_desc' => 'Enter your new password below',
+    'reset_password' => 'Reset Password',
+    'enter_new_password' => 'Enter new password (min 8 characters)',
+    'confirm_new_password' => 'Confirm your new password',
 ];

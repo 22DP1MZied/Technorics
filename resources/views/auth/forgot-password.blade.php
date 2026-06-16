@@ -13,10 +13,10 @@
 
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Forgot Password? 🔐
+                    {{ __('messages.forgot_password_title') }} 🔐
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400">
-                    No worries! Enter your email and we'll send you reset instructions
+                    {{ __('messages.forgot_password_desc') }}
                 </p>
             </div>
 
@@ -37,7 +37,7 @@
                 
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address
+                        {{ __('messages.email') }}
                     </label>
                     <input id="email" 
                            name="email" 
@@ -45,13 +45,13 @@
                            required 
                            autofocus
                            value="{{ old('email') }}"
-                           placeholder="Enter your email address"
+                           placeholder="{{ __('messages.enter_email') }}"
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                 </div>
 
                 <button type="submit" 
                         class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transform hover:scale-105 transition duration-200 shadow-lg">
-                    Send Reset Link
+                    {{ __('messages.send_reset_link') }}
                 </button>
             </form>
 
@@ -60,7 +60,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    Back to Login
+                    {{ __('messages.back_to_login') }}
                 </a>
             </div>
         </div>

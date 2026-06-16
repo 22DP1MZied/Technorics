@@ -407,4 +407,18 @@ return [
     'join_technorics' => 'Присоединяйтесь к Technorics! 🚀',
     'create_account_desc' => 'Создайте аккаунт, чтобы начать покупки',
     'create_account' => 'Создать аккаунт',
+
+    // Forgot password
+    'forgot_password_title' => 'Забыли пароль? 🔐',
+    'forgot_password_desc' => 'Не беспокойтесь! Введите email и мы отправим инструкции по сбросу',
+    'send_reset_link' => 'Отправить ссылку для сброса',
+    'back_to_login' => 'Вернуться к входу',
+    'enter_email' => 'Введите ваш email адрес',
+
+    // Reset password
+    'set_new_password' => 'Установить новый пароль 🔑',
+    'set_new_password_desc' => 'Введите новый пароль ниже',
+    'reset_password' => 'Сбросить пароль',
+    'enter_new_password' => 'Введите новый пароль (мин 8 символов)',
+    'confirm_new_password' => 'Подтвердите новый пароль',
 ];
