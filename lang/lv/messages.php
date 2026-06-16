@@ -404,4 +404,17 @@ return [
     'blog_post5_desc' => 'No galda līdz krēslam un monitora novietojumam — ergonomiska spēļu vieta.',
     'blog_post6_title' => 'Kā tīrīt elektroniku',
     'blog_post6_desc' => 'Uzturiet savu tehnoloģiju izskatīgu un veiktspējīgu ar šiem vienkāršiem padomiem.',
+
+    // Auth
+    'welcome_back' => 'Laipni lūdzam atpakaļ! 👋',
+    'sign_in_desc' => 'Ieejiet, lai turpinātu iepirkties',
+    'remember_me' => 'Atcerēties mani',
+    'forgot_password' => 'Aizmirsāt paroli?',
+    'no_account' => 'Nav konta?',
+    'sign_up_now' => 'Reģistrēties tagad',
+
+    // Register page
+    'join_technorics' => 'Pievienojies Technorics! 🚀',
+    'create_account_desc' => 'Izveidojiet kontu, lai sāktu iepirkties',
+    'create_account' => 'Izveidot kontu',
 ];

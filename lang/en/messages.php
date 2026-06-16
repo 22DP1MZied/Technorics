@@ -394,4 +394,17 @@ return [
     'blog_post5_desc' => 'From desk to chair to monitor placement, create an ergonomic and stylish gaming space.',
     'blog_post6_title' => 'How to Clean Your Electronics',
     'blog_post6_desc' => 'Keep your tech looking and performing like new with these simple maintenance tips.',
+
+    // Auth
+    'welcome_back' => 'Welcome Back! 👋',
+    'sign_in_desc' => 'Sign in to continue shopping',
+    'remember_me' => 'Remember me',
+    'forgot_password' => 'Forgot password?',
+    'no_account' => 'Don\'t have an account?',
+    'sign_up_now' => 'Sign up now',
+
+    // Register page
+    'join_technorics' => 'Join Technorics! 🚀',
+    'create_account_desc' => 'Create your account to start shopping',
+    'create_account' => 'Create Account',
 ];

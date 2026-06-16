@@ -13,10 +13,10 @@
 
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Welcome Back! 👋
+                    {{ __('messages.welcome_back') }} 👋
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400">
-                    Sign in to continue shopping
+                    {{ __('messages.sign_in_desc') }}
                 </p>
             </div>
 
@@ -37,7 +37,7 @@
                 
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address
+                        {{ __('messages.email') }}
                     </label>
                     <input id="email" 
                            name="email" 
@@ -49,7 +49,7 @@
 
                 <div>
                     <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Password
+                        {{ __('messages.password') }}
                     </label>
                     <input id="password" 
                            name="password" 
@@ -63,25 +63,25 @@
                         <input type="checkbox" 
                                name="remember" 
                                class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember me</span>
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ __('messages.remember_me') }}</span>
                     </label>
 
                     <a href="{{ route('password.request') }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
-                        Forgot password?
+                        {{ __('messages.forgot_password') }}
                     </a>
                 </div>
 
                 <button type="submit" 
                         class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transform hover:scale-105 transition duration-200 shadow-lg">
-                    Sign In
+                    {{ __('messages.login') }}
                 </button>
             </form>
 
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Don't have an account? 
+                    {{ __('messages.no_account') }} 
                     <a href="{{ route('register') }}" class="font-semibold text-emerald-600 hover:text-emerald-700">
-                        Sign up now
+                        {{ __('messages.sign_up_now') }}
                     </a>
                 </p>
             </div>

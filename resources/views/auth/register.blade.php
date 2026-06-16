@@ -13,10 +13,10 @@
 
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Join Technorics! 🚀
+                    {{ __('messages.join_technorics') }} 🚀
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400">
-                    Create your account to start shopping
+                    {{ __('messages.create_account_desc') }}
                 </p>
             </div>
 
@@ -35,7 +35,7 @@
                 
                 <div>
                     <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Full Name
+                        {{ __('messages.full_name') }}
                     </label>
                     <input id="name" 
                            name="name" 
@@ -47,7 +47,7 @@
 
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address
+                        {{ __('messages.email') }}
                     </label>
                     <input id="email" 
                            name="email" 
@@ -70,7 +70,7 @@
 
                 <div>
                     <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Confirm Password
+                        {{ __('messages.confirm_password') }}
                     </label>
                     <input id="password_confirmation" 
                            name="password_confirmation" 
@@ -81,15 +81,15 @@
 
                 <button type="submit" 
                         class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transform hover:scale-105 transition duration-200 shadow-lg">
-                    Create Account
+                    {{ __('messages.create_account') }}
                 </button>
             </form>
 
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Already have an account? 
+                    {{ __('messages.already_have_account') }} 
                     <a href="{{ route('login') }}" class="font-semibold text-emerald-600 hover:text-emerald-700">
-                        Sign in
+                        {{ __('messages.login') }}
                     </a>
                 </p>
             </div>
