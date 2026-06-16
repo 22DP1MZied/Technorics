@@ -303,6 +303,9 @@ return [
     'faq_returns_desc' => '30 dienu atgriešanas politika. Pilna atmaksa, ja neesi apmierināts.',
     'faq_warranty_title' => 'Garantija',
     'faq_warranty_desc' => 'Visiem produktiem ir ražotāja garantija. Pieejama pagarinātā garantija.',
+    'ai_assistant_tip' => '💬 Noklikšķiniet uz pogas AI Asistents ekrāna apakšējā labajā stūrī, lai saņemtu tūlītēju palīdzību.',
+    'hours_weekday' => '9:00 - 18:00',
+    'hours_saturday' => '10:00 - 16:00',
 
     // Track order
     'track_your_order' => 'Izsekot pasūtījumam 📦',

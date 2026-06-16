@@ -8,7 +8,7 @@
         <div class="flex items-center gap-2 text-sm">
             <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-emerald-600">Home</a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-900 dark:text-white font-semibold">Contact Us</span>
+            <span class="text-gray-900 dark:text-white font-semibold">{{ __('messages.contact_us') }}</span>
         </div>
     </div>
 </div>
@@ -72,13 +72,13 @@
                             required 
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                         <option value="">{{ __('messages.select_subject') }}</option>
-                        <option value="General Inquiry" {{ old('subject') == 'General Inquiry' ? 'selected' : '' }}>General Inquiry</option>
-                        <option value="Product Question" {{ old('subject') == 'Product Question' ? 'selected' : '' }}>Product Question</option>
-                        <option value="Order Support" {{ old('subject') == 'Order Support' ? 'selected' : '' }}>Order Support</option>
-                        <option value="Technical Support" {{ old('subject') == 'Technical Support' ? 'selected' : '' }}>Technical Support</option>
+                        <option value="General Inquiry" {{ old('subject') == 'General Inquiry' ? 'selected' : '' }}>{{ __('messages.general_inquiry') }}</option>
+                        <option value="Product Question" {{ old('subject') == 'Product Question' ? 'selected' : '' }}>{{ __('messages.product_question') }}</option>
+                        <option value="Order Support" {{ old('subject') == 'Order Support' ? 'selected' : '' }}>{{ __('messages.order_support') }}</option>
+                        <option value="Technical Support" {{ old('subject') == 'Technical Support' ? 'selected' : '' }}>{{ __('messages.technical_support') }}</option>
                         <option value="Returns & Refunds" {{ old('subject') == 'Returns & Refunds' ? 'selected' : '' }}>{{ __('messages.faq_returns_title') }}</option>
-                        <option value="Business Inquiry" {{ old('subject') == 'Business Inquiry' ? 'selected' : '' }}>Business Inquiry</option>
-                        <option value="Other" {{ old('subject') == 'Other' ? 'selected' : '' }}>Other</option>
+                        <option value="Business Inquiry" {{ old('subject') == 'Business Inquiry' ? 'selected' : '' }}>{{ __('messages.business_inquiry') }}</option>
+                        <option value="Other" {{ old('subject') == 'Other' ? 'selected' : '' }}>{{ __('messages.other') }}</option>
                     </select>
                 </div>
 
@@ -155,7 +155,7 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('messages.ai_help') }}</p>
                 <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-emerald-200 dark:border-emerald-700">
                     <p class="text-sm text-gray-700 dark:text-gray-300">
-                        💬 Click the <span class="font-bold text-emerald-600 dark:text-emerald-400">AI Assistant</span> button in the bottom-right corner of your screen for instant help.
+                        {{ __('messages.ai_assistant_tip') }}
                     </p>
                 </div>
             </div>
@@ -170,11 +170,11 @@
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div class="flex justify-between">
                         <span>{{ __('messages.mon_fri') }}:</span>
-                        <span class="font-semibold">9:00 AM - 6:00 PM</span>
+                        <span class="font-semibold">{{ __('messages.hours_weekday') }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>{{ __('messages.saturday') }}:</span>
-                        <span class="font-semibold">10:00 AM - 4:00 PM</span>
+                        <span class="font-semibold">{{ __('messages.hours_saturday') }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>{{ __('messages.sunday') }}:</span>

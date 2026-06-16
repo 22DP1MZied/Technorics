@@ -286,6 +286,9 @@ return [
     'faq_returns_desc' => '30-day return policy. Full refund if you\'re not satisfied with your purchase.',
     'faq_warranty_title' => 'Warranty',
     'faq_warranty_desc' => 'All products come with manufacturer\'s warranty. Extended warranty available.',
+    'ai_assistant_tip' => '💬 Click the AI Assistant button in the bottom-right corner of your screen for instant help.',
+    'hours_weekday' => '9:00 AM - 6:00 PM',
+    'hours_saturday' => '10:00 AM - 4:00 PM',
 
     // Track order
     'track_your_order' => 'Track Your Order 📦',
